@@ -3,13 +3,12 @@ import io
 import os
 import re
 from difflib import SequenceMatcher
-
 import fitz
 from flask import Flask, render_template, request
 from groq import Groq
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyMuPDFLoader
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from PIL import Image
 
@@ -38,56 +37,216 @@ def first_existing_path(*relative_paths):
 
 
 TEMPLATE_DIR = first_existing_path("templates", os.path.join("src", "jain_ai_assistant", "templates"))
-PDF_PATH = first_existing_path(
-    "Jain_University_Kanakapura_Advanced.pdf",
-    os.path.join("data", "raw", "academics", "Jain_University_Kanakapura_Advanced.pdf"),
-)
-VECTOR_DB_DIR = first_existing_path("chroma_db", os.path.join("storage", "vector_db"))
+DATA_FOLDER = first_existing_path("data", os.path.join("data", "raw", "academics"))
+VECTOR_DB_DIR = first_existing_path("chroma_db_openai", os.path.join("storage", "vector_db"))
+PROCESSED_FILES_PATH = os.path.join(candidate_roots()[0], "processed_files.txt")
 
 app = Flask(__name__, template_folder=TEMPLATE_DIR)
 
 # ==============================
 # Groq Setup
 # ==============================
-client = Groq(api_key="YOUR_GROQ_API_KEY")
+client = Groq()
 TEXT_MODEL = "openai/gpt-oss-120b"
 VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
 
 # ==============================
-# Load and Process PDF (RAG)
+# Load and Process PDFs (RAG)
 # ==============================
-loader = PyMuPDFLoader(PDF_PATH)
-documents = loader.load()
-
 splitter = RecursiveCharacterTextSplitter(
-    chunk_size=500,
-    chunk_overlap=50,
+    chunk_size=1000,
+    chunk_overlap=200,
 )
-
-docs = splitter.split_documents(documents)
 
 embeddings = None
 db = None
+docs = []
+
+
+def list_pdf_files(folder_path):
+    """Return all PDF filenames from the configured data folder."""
+    if not os.path.isdir(folder_path):
+        print(f"Data folder not found: {folder_path}")
+        return []
+
+    try:
+        pdf_files = [
+            file_name for file_name in os.listdir(folder_path)
+            if file_name.lower().endswith(".pdf")
+        ]
+    except OSError as exc:
+        print(f"Could not read data folder '{folder_path}': {exc}")
+        return []
+
+    if not pdf_files:
+        print(f"No PDF files found in: {folder_path}")
+
+    return sorted(pdf_files)
+
+
+def load_processed_files():
+    """Read the processed file tracker safely."""
+    if not os.path.exists(PROCESSED_FILES_PATH):
+        return set()
+
+    try:
+        with open(PROCESSED_FILES_PATH, "r", encoding="utf-8") as file_obj:
+            return {line.strip() for line in file_obj if line.strip()}
+    except OSError as exc:
+        print(f"Could not read processed files tracker '{PROCESSED_FILES_PATH}': {exc}")
+        return set()
+
+
+def save_processed_files(processed_files):
+    """Write the deduplicated set of processed files to disk."""
+    try:
+        with open(PROCESSED_FILES_PATH, "w", encoding="utf-8") as file_obj:
+            for filename in sorted(processed_files):
+                file_obj.write(filename + "\n")
+    except OSError as exc:
+        print(f"Could not write processed files tracker '{PROCESSED_FILES_PATH}': {exc}")
+
+
+def load_pdfs_by_name(folder_path, file_names):
+    """Load the requested PDFs and attach metadata used by retrieval and tracing."""
+    loaded_docs = []
+
+    for file_name in sorted(file_names):
+        full_path = os.path.join(folder_path, file_name)
+
+        try:
+            loader = PyMuPDFLoader(full_path)
+            file_docs = loader.load()
+        except Exception as exc:
+            print(f"Skipping unreadable PDF '{file_name}': {exc}")
+            continue
+
+        for index, doc in enumerate(file_docs):
+            doc.metadata["source"] = file_name
+            doc.metadata["file_path"] = full_path
+            doc.metadata["page_number"] = doc.metadata.get("page", index)
+
+        loaded_docs.extend(file_docs)
+
+    return loaded_docs
+
+
+def load_new_pdfs(folder_path, processed_files):
+    """Load only PDFs that have not already been processed."""
+    all_pdf_files = list_pdf_files(folder_path)
+    new_pdf_files = [file_name for file_name in all_pdf_files if file_name not in processed_files]
+
+    if not new_pdf_files:
+        return [], processed_files
+
+    new_docs = load_pdfs_by_name(folder_path, new_pdf_files)
+    successfully_loaded_files = {doc.metadata["source"] for doc in new_docs}
+
+    if successfully_loaded_files:
+        processed_files = set(processed_files)
+        processed_files.update(successfully_loaded_files)
+        save_processed_files(processed_files)
+
+    failed_files = set(new_pdf_files) - successfully_loaded_files
+    for file_name in sorted(failed_files):
+        print(f"PDF was not marked as processed because it could not be loaded: {file_name}")
+
+    return new_docs, processed_files
+
+
+def load_all_pdfs(folder_path):
+    """Load all PDFs so keyword fallback can search the full document set."""
+    return load_pdfs_by_name(folder_path, list_pdf_files(folder_path))
+
+
+def split_documents_with_ids(documents_to_split):
+    """Split documents and assign deterministic chunk ids to avoid duplicates."""
+    if not documents_to_split:
+        return [], []
+
+    split_docs = splitter.split_documents(documents_to_split)
+    chunk_counts = {}
+    chunk_ids = []
+
+    for doc in split_docs:
+        source = doc.metadata.get("source", "unknown")
+        page_number = doc.metadata.get("page_number", doc.metadata.get("page", 0))
+        chunk_key = f"{source}:{page_number}"
+        chunk_index = chunk_counts.get(chunk_key, 0)
+        chunk_counts[chunk_key] = chunk_index + 1
+
+        doc.metadata["chunk_index"] = chunk_index
+        chunk_ids.append(f"{source}:{page_number}:{chunk_index}")
+
+    return split_docs, chunk_ids
+
+
+def get_processed_sources_from_db(vector_store):
+    """Recover processed sources from Chroma metadata if the tracker is missing or stale."""
+    try:
+        payload = vector_store.get(include=["metadatas"])
+    except Exception as exc:
+        print(f"Could not inspect existing vector DB metadata: {exc}")
+        return set()
+
+    metadatas = payload.get("metadatas") or []
+    return {
+        metadata.get("source") for metadata in metadatas
+        if metadata and metadata.get("source")
+    }
+
 
 # ==============================
 # Chroma DB (Persistent)
 # ==============================
 try:
-    embeddings = HuggingFaceEmbeddings()
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    processed_files = load_processed_files()
+    existing_db = os.path.isdir(VECTOR_DB_DIR) and any(os.scandir(VECTOR_DB_DIR))
 
-    if os.path.exists(VECTOR_DB_DIR):
+    if existing_db:
         db = Chroma(
             persist_directory=VECTOR_DB_DIR,
             embedding_function=embeddings,
         )
+
+        known_sources = get_processed_sources_from_db(db)
+        if known_sources - processed_files:
+            processed_files.update(known_sources)
+            save_processed_files(processed_files)
+
+        new_documents, processed_files = load_new_pdfs(DATA_FOLDER, processed_files)
+        split_docs, chunk_ids = split_documents_with_ids(new_documents)
+
+        if split_docs:
+            db.add_documents(split_docs, ids=chunk_ids)
+            print(
+                f"Added {len(split_docs)} chunks from "
+                f"{len(set(doc.metadata['source'] for doc in new_documents))} new PDF(s)."
+            )
+        else:
+            print("No new PDFs detected. Existing vector DB is up to date.")
     else:
-        db = Chroma.from_documents(
-            docs,
-            embeddings,
-            persist_directory=VECTOR_DB_DIR,
-        )
+        all_documents, processed_files = load_new_pdfs(DATA_FOLDER, processed_files)
+        split_docs, chunk_ids = split_documents_with_ids(all_documents)
+
+        if split_docs:
+            db = Chroma.from_documents(
+                split_docs,
+                embeddings,
+                ids=chunk_ids,
+                persist_directory=VECTOR_DB_DIR,
+            )
+            print(f"Created vector DB with {len(split_docs)} chunks from {len(processed_files)} PDF(s).")
+        else:
+            print("Vector DB was not created because there were no readable PDFs to ingest.")
+
+    all_documents = load_all_pdfs(DATA_FOLDER)
+    docs, _ = split_documents_with_ids(all_documents)
 except Exception as exc:
     print(f"Embedding setup failed, using keyword-only retrieval: {exc}")
+    all_documents = load_all_pdfs(DATA_FOLDER)
+    docs, _ = split_documents_with_ids(all_documents)
 
 # ==============================
 # Chat History
@@ -107,6 +266,11 @@ Rules:
 - Do not invent facts, fees, packages, rankings, policies, or dates.
 - If the context does not contain the answer, clearly say the source material does not include it.
 - Keep the answer concise, clear, and student-friendly.
+- If the question is general or conversational, answer naturally without relying on the context.
+- Always maintain a helpful and approachable tone.
+Format:
+- First line: direct answer
+- Then: short explanation if needed, using only the context.
 """
 
 GENERAL_SYSTEM_PROMPT = """
@@ -127,6 +291,7 @@ Rules:
 - If the answer is present in the extracted text, give the exact answer in the first sentence.
 - If the extracted text does not contain the answer, say that the uploaded file does not include it.
 - Do not invent text that was not extracted.
+- Keep the answer concise and relevant to the user's question about the file.
 """
 
 GENERAL_CHAT_PATTERNS = {
@@ -135,12 +300,22 @@ GENERAL_CHAT_PATTERNS = {
     "tell me a joke", "joke", "motivate me", "thank you", "thanks", "bye",
 }
 
+COMMON_QUERY_WORDS = {
+    "the", "and", "for", "with", "that", "this", "from", "have", "your", "about",
+    "what", "when", "where", "which", "who", "whom", "whose", "why", "how", "can",
+    "could", "would", "should", "give", "tell", "say", "show", "find", "need",
+    "please", "into", "onto", "does", "did", "been", "being", "name", "details",
+    "submitted", "submission", "labactivity", "activity", "lab", "assignment", "pdf",
+    "file", "document", "prof", "professor", "sir", "madam", "my", "me", "i",
+}
+
 RAG_HINTS = {
     "jain", "university", "campus", "admission", "fees", "course", "courses",
     "syllabus", "placement", "placements", "hostel", "department", "faculty",
     "semester", "exam", "academics", "academic", "notes", "pdf", "document",
     "research", "bengaluru", "bangalore", "kanakapura", "program", "programs",
-    "package", "recruiter", "recruiters", "curriculum",
+    "package", "recruiter", "recruiters", "curriculum", "prof", "professor",
+    "submitted", "submission", "lab", "assignment", "faculty", "teacher",
 }
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
@@ -150,7 +325,16 @@ PDF_EXTENSIONS = {".pdf"}
 def keyword_search(query, chunks, limit=3):
     """Fallback retrieval for exact facts and minor-typo queries."""
     keywords = set(re.findall(r"\w+", query.lower()))
-    keywords = {word for word in keywords if len(word) > 2}
+    keywords = {
+        word for word in keywords
+        if len(word) > 2 and word not in COMMON_QUERY_WORDS
+    }
+
+    if not keywords:
+        keywords = {
+            word for word in re.findall(r"\w+", query.lower())
+            if len(word) > 2
+        }
 
     scored_chunks = []
     for chunk in chunks:
@@ -307,6 +491,21 @@ def extract_uploaded_text(file_storage):
 def direct_fact_answer(query, context):
     normalized = query.lower()
     compact_context = re.sub(r"\s+", " ", context)
+
+    if ("prof" in normalized or "professor" in normalized or "faculty" in normalized) and (
+        "name" in normalized or "submitted" in normalized or "submit" in normalized
+    ):
+        match = re.search(r"submitted to\s*[:\-]?\s*(prof\.?\s*[A-Za-z .]+)", compact_context, re.IGNORECASE)
+        if match:
+            return f"The professor name is {match.group(1).strip()}."
+
+    if (
+        ("my name" in normalized or "who submitted" in normalized or "submitted by" in normalized)
+        or ("name" in normalized and "pdf" in normalized)
+    ):
+        match = re.search(r"submitted by\s*[:\-]?\s*([A-Za-z .]+)", compact_context, re.IGNORECASE)
+        if match:
+            return f"The submitted name is {match.group(1).strip()}."
 
     if "highest package" in normalized or ("package" in normalized and "highest" in normalized):
         match = re.search(r"highest package[^.:\n]*?(\d+\s*LPA)", compact_context, re.IGNORECASE)
