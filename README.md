@@ -1,29 +1,91 @@
 # Jain AI
 
-Jain AI is a modular Flask application for academic assistance, document question-answering, and upload-aware chat. It combines retrieval-augmented generation (RAG), OCR, and session-based conversation flows to support questions grounded in local university documents and uploaded files.
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.x-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![RAG](https://img.shields.io/badge/RAG-Document_Grounded-0A7E8C)](#how-it-works)
+[![OCR](https://img.shields.io/badge/OCR-PDF_%26_Image-8A5CF6)](#what-it-does)
+[![License](https://img.shields.io/badge/License-Add_Your_License-lightgrey)](#license)
 
-## Highlights
+> **Academic intelligence, grounded in your documents.**
+> A modular Flask application combining RAG, OCR, and conversational AI to answer questions from university documents and uploaded files.
 
-- Modular Flask app built with an application factory
-- Retrieval over local PDF content using Chroma and OpenAI embeddings
-- OCR support for PDFs and images
-- Session-isolated chat history per browser session
-- Web routes, health endpoint, and API/admin blueprints
-- Organized project structure for iterative team development
+---
 
-## Architecture Overview
+## Overview
 
-The application is split into focused packages under `src/jain_ai`:
+Jain AI is designed for document-grounded academic assistance. Instead of relying on generic chatbot responses, it retrieves relevant content from your local academic PDFs, extracts text from uploads when needed, and answers in a conversational interface.
 
-- `rag/` handles document loading, chunking, indexing, retrieval, and route registration
-- `ocr/` handles text extraction from uploaded PDFs and images
-- `llm/` handles Groq client setup and model calls
-- `services/` contains chat, routing, upload, and session logic
-- `schemas/` contains request/response data structures
-- `db/` contains persistence-oriented modules for future expansion
-- `utils/` contains shared helpers for files, logging, validation, and security
+It is a good fit for:
 
-## Project Structure
+- university information assistants
+- internal academic help desks
+- PDF-based student support tools
+- document-backed chat interfaces that require traceable answers
+
+---
+
+## What It Does
+
+Jain AI is a smart academic assistant built for university contexts. Upload PDFs, ask questions, and get answers backed by your actual documents instead of generic responses.
+
+| Capability | Description |
+|---|---|
+| Document Q&A | Ask questions grounded in local university PDFs using retrieval-augmented generation |
+| OCR Support | Extracts text from scanned PDFs and images before querying |
+| Session Chat | Maintains per-browser conversation history across a session |
+| Modular Design | Clean Flask application factory with a package-based structure |
+
+---
+
+## Getting Started In 60 Seconds
+
+```bash
+uv sync
+copy .env.example .env
+uv run python scripts/index_data.py
+uv run app.py
+```
+
+Then open:
+
+```text
+http://localhost:5000
+```
+
+Before indexing, place your academic PDFs in `data/raw/academics/`.
+
+---
+
+## Visuals
+
+Architecture diagram:
+
+![Jain AI architecture](jain_ai_structure_clean.svg)
+
+Request flow:
+
+![Jain AI request flow](jain_ai_request_flow.svg)
+
+If you want, you can later replace these with UI screenshots or a short demo GIF.
+
+---
+
+## Architecture
+
+The app is organized into focused packages under `src/jain_ai/`:
+
+```text
+src/jain_ai/
+├── rag/          # Document loading, chunking, indexing, retrieval, routes
+├── ocr/          # Text extraction from PDFs and images
+├── llm/          # Groq client setup and model calls
+├── services/     # Chat, routing, upload, and session logic
+├── schemas/      # Request/response data structures
+├── db/           # Persistence layer (future expansion)
+└── utils/        # Shared helpers: logging, validation, security
+```
+
+Full project layout:
 
 ```text
 jain-ai/
@@ -57,37 +119,45 @@ jain-ai/
     └── utils/
 ```
 
-## Requirements
+---
 
-- Python 3.11+
+## Quickstart
+
+### 1. Prerequisites
+
+- Python 3.11 or newer
 - `uv` recommended for dependency management
-- Groq API key for chat and OCR-backed responses
+- Groq API key for chat and OCR
 - OpenAI API key for embedding-based retrieval
 
-## Installation
+### 2. Install dependencies
 
 ```bash
 uv sync
 ```
 
-If you prefer a virtual environment manually:
+Or with a manual virtual environment:
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
-pip install -e .
+.venv\Scripts\activate        # Windows
+# source .venv/bin/activate   # macOS/Linux
+pip install flask groq langchain langchain-chroma langchain-community langchain-openai langchain-text-splitters chromadb pymupdf pillow pytest
 ```
 
-## Environment Configuration
+Note:
 
-Create a local `.env` file based on `.env.example`.
+- This repository is primarily configured for `uv`
+- If you use plain `pip`, install the dependencies listed in `pyproject.toml`
 
-Example variables:
+### 3. Set up environment variables
+
+Copy `.env.example` to `.env` and fill in your keys:
 
 ```env
 GROQ_API_KEY=your-groq-api-key
 OPENAI_API_KEY=your-openai-api-key
-FLASK_SECRET_KEY=replace-with-a-long-random-secret
+FLASK_SECRET_KEY=a-long-random-secret
 HOST=0.0.0.0
 PORT=5000
 LOG_LEVEL=INFO
@@ -96,122 +166,221 @@ SESSION_COOKIE_SECURE=false
 
 Notes:
 
-- `GROQ_API_KEY` is required for model responses and OCR-assisted extraction
-- `OPENAI_API_KEY` is required for embedding-based vector retrieval
-- If `OPENAI_API_KEY` is missing, RAG may fall back to reduced functionality depending on the code path
+- `GROQ_API_KEY` is required for chat and OCR-assisted extraction
+- `OPENAI_API_KEY` is required for semantic retrieval with embeddings
+- Default max upload size is 12 MB
+- `.env` should stay local and never be committed
 
-## Running the App
+### 4. Add academic documents
 
-Start the development server:
-
-```bash
-uv run app.py
-```
-
-If `uv` has a local cache permission issue on Windows, run the app with the virtual environment Python instead:
-
-```bash
-.\.venv\Scripts\python.exe app.py
-```
-
-The app reads host and port from the environment and defaults to:
-
-- Host: `0.0.0.0`
-- Port: `5000`
-
-## WSGI Entrypoint
-
-For production-style hosting, use:
-
-```python
-wsgi:app
-```
-
-The WSGI entrypoint is defined in `wsgi.py`.
-
-## Data Layout
-
-Place source academic PDFs in:
+Place source PDFs in:
 
 ```text
 data/raw/academics/
 ```
 
-Runtime-generated directories:
-
-- `data/uploads/` for uploaded user files
-- `data/processed/` for processed outputs
-- `storage/vector_db/` for Chroma persistence
-- `storage/logs/` for application logs
-- `storage/cache/` for temporary cached data
-
-## Available Routes
-
-- `/` main chat interface
-- `/health` application health and vector-store readiness
-- `/api/ping` simple API status check
-- `/admin/status` admin readiness check
-
-## Useful Commands
-
-Run setup verification:
-
-```bash
-uv run python scripts/verify_setup.py
-```
-
-Index or reindex document data:
+Then index them:
 
 ```bash
 uv run python scripts/index_data.py
-uv run python scripts/reindex_documents.py
 ```
 
-Seed or prepare local data:
+### 5. Start the server
 
 ```bash
-uv run python scripts/seed_data.py
+uv run app.py
 ```
 
-Run tests:
+By default, the app runs at:
+
+```text
+http://localhost:5000
+```
+
+Windows note:
+
+If `uv` has a cache permission issue, run the app directly through the virtual environment Python:
+
+```bash
+.\.venv\Scripts\python.exe app.py
+```
+
+Health check:
+
+```text
+http://localhost:5000/health
+```
+
+---
+
+## How It Works
+
+1. Academic PDFs are loaded from `data/raw/academics/`
+2. Documents are split into chunks and indexed in Chroma
+3. User questions are routed as general chat, RAG, or file-upload requests
+4. Uploaded PDFs and images can go through OCR before answering
+5. Responses are generated using Groq models with document context when available
+
+---
+
+## Routes
+
+| Route | Description |
+|---|---|
+| `/` | Main chat interface |
+| `/health` | App health and vector store readiness |
+| `/api/ping` | Simple API status check |
+| `/admin/status` | Admin readiness check |
+
+---
+
+## Useful Commands
+
+```bash
+# Start the app
+uv run app.py
+
+# Verify local setup
+uv run python scripts/verify_setup.py
+
+# Index documents
+uv run python scripts/index_data.py
+
+# Re-index documents after adding or changing PDFs
+uv run python scripts/reindex_documents.py
+
+# Seed local data
+uv run python scripts/seed_data.py
+
+# Run tests
+uv run pytest
+```
+
+---
+
+## Configuration Notes
+
+Current defaults include:
+
+- Host: `0.0.0.0`
+- Port: `5000`
+- Max upload size: `12 MB`
+- Text model: `openai/gpt-oss-120b`
+- Vision model: `meta-llama/llama-4-scout-17b-16e-instruct`
+- Embedding model: `text-embedding-3-small`
+
+Persistent and generated directories:
+
+- `data/uploads/` for uploaded files
+- `data/processed/` for processed outputs
+- `storage/vector_db/` for vector storage
+- `storage/logs/` for logs
+- `storage/cache/` for temporary cache files
+
+---
+
+## Testing
+
+The test suite under `tests/` covers:
+
+- OCR extraction flows
+- RAG retrieval behavior
+- Route handling
+- File upload processing
+- Session state behavior
+
+Run:
 
 ```bash
 uv run pytest
 ```
 
-## Testing
+You can also run a single test file during development:
 
-The test suite lives under `tests/` and includes coverage for:
+```bash
+uv run pytest tests/test_routes.py
+```
 
-- OCR flows
-- RAG behavior
-- route handling
-- uploads
-- session behavior
+---
 
-## Development Notes
+## Production Deployment
 
-- The app uses an application factory in `src/jain_ai/app_factory.py`
-- Session chat history is stored in Flask session state
-- The health endpoint initializes the RAG pipeline and reports document/vector readiness
-- The project is structured to support future extraction of services, routes, and persistence layers
+Use the WSGI entrypoint with a production server:
 
-## Security Notes
+```bash
+gunicorn wsgi:app
+```
 
-- Never commit real API keys or secrets
-- Keep `.env` local and untracked
-- Use a strong `FLASK_SECRET_KEY` outside local development
-- Set `SESSION_COOKIE_SECURE=true` when running behind HTTPS
+If you deploy on Windows or in a platform without Gunicorn, point your process manager to:
 
-## Repository Documentation
+```text
+wsgi:app
+```
 
-Additional technical documentation is available in:
+---
 
-- `docs/api.md`
-- `docs/architecture.md`
-- `docs/deployment.md`
-- `docs/rag_pipeline.md`
+## Security Checklist
+
+- Never commit `.env` or real API keys
+- Use a strong random `FLASK_SECRET_KEY` in non-local environments
+- Set `SESSION_COOKIE_SECURE=true` behind HTTPS
+- Keep `.env` listed in `.gitignore`
+- Rotate any key immediately if it has ever been committed
+
+---
+
+## Documentation
+
+| Doc | Contents |
+|---|---|
+| `docs/api.md` | API endpoints and request/response formats |
+| `docs/architecture.md` | System design and component relationships |
+| `docs/deployment.md` | Production deployment guidance |
+| `docs/rag_pipeline.md` | RAG pipeline internals |
+
+Suggested reading order for new contributors:
+
+1. `docs/architecture.md`
+2. `docs/rag_pipeline.md`
+3. `docs/api.md`
+4. `docs/deployment.md`
+
+---
+
+## Tech Stack
+
+- Flask
+- Chroma
+- OpenAI Embeddings
+- Groq
+- PyMuPDF
+- Pillow
+- Python 3.11+
+
+---
+
+## Current Status
+
+This repository is actively being modularized from a single-file prototype into a package-based Flask application. If you see import or environment issues while running locally, verify:
+
+- your `.env` values are present
+- your dependencies were installed successfully
+- your documents are placed under `data/raw/academics/`
+- your vector store can be created under `storage/vector_db/`
+
+---
+
+## Contributing
+
+If you are extending the project:
+
+- keep secrets out of source files and commits
+- prefer small, focused modules under `src/jain_ai/`
+- add or update tests when changing routes, OCR, or retrieval behavior
+- document new scripts, routes, or environment variables in this README and `docs/`
+
+---
 
 ## License
 
-Add your preferred license information here before public distribution.
+Add your preferred license before public distribution.
