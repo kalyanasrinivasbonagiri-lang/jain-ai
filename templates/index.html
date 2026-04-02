@@ -71,6 +71,25 @@ html, body {
 .topbar-right {
   display: flex; align-items: center; gap: 8px;
 }
+.clear-chat-btn {
+  background: var(--navy2);
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .8px;
+  padding: 7px 10px;
+  text-transform: uppercase;
+  transition: all .18s;
+}
+.clear-chat-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(255, 77, 77, .08);
+}
 .session-badge {
   font-family: var(--mono);
   font-size: 9px; font-weight: 600;
@@ -372,6 +391,12 @@ textarea::placeholder { color: var(--muted); }
       <div class="topbar-title">Jain AI</div>
     </div>
     <div class="topbar-right">
+      {% if chat_history %}
+      <form method="POST" action="/" style="display:inline">
+        <input type="hidden" name="reset_chat" value="1"/>
+        <button type="submit" class="clear-chat-btn">Clear Chat</button>
+      </form>
+      {% endif %}
       <span class="session-badge">Active</span>
       <div class="topbar-avatar">👤</div>
     </div>
