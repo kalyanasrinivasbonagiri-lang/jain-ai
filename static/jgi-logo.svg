@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title>JGI Logo</title>
+  <circle cx="64" cy="64" r="54" fill="#172554"/>
+  <text
+    x="64"
+    y="77"
+    text-anchor="middle"
+    fill="#ffffff"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="42"
+    font-weight="700"
+    letter-spacing="-2"
+  >JGi</text>
+</svg>

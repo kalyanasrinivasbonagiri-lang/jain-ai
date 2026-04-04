@@ -14,7 +14,7 @@ COMMON_QUERY_WORDS = {
 }
 
 RAG_HINTS = {
-    "jain", "university", "campus", "admission", "fees", "course", "courses",
+    "jain", "campus", "admission", "fees", "course", "courses",
     "syllabus", "placement", "placements", "hostel", "department", "faculty",
     "semester", "exam", "academics", "academic", "notes", "pdf", "document",
     "research", "bengaluru", "bangalore", "kanakapura", "program", "programs",
