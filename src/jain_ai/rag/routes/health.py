@@ -2,8 +2,8 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, jsonify
 
-from ..constants.settings import APP_NAME
-from ..rag.pipeline import get_rag_pipeline
+from ...constants.settings import APP_NAME
+from ..pipeline import get_rag_pipeline
 
 
 health_bp = Blueprint("health", __name__)

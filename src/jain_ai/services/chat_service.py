@@ -5,7 +5,7 @@ from ..rag.pipeline import get_rag_pipeline
 from ..utils.logging_utils import get_logger
 from .response_service import answer_from_context
 from .routing_service import route_request
-from .session_service import append_chat_message
+from .session_service import append_chat_message, get_recent_chat_context
 from .upload_service import extract_uploaded_text
 
 
@@ -15,6 +15,7 @@ logger = get_logger("jain_ai.chat_service")
 def handle_chat_turn(user_input, file):
     uploaded_filename = file.filename if file and file.filename else ""
     user_message = user_input or f"Analyze uploaded file: {uploaded_filename}"
+    recent_chat_context = get_recent_chat_context()
     append_chat_message("user", user_message)
 
     try:
@@ -28,12 +29,29 @@ def handle_chat_turn(user_input, file):
                 bot_reply = f"I could not extract readable text from `{filename}`."
             else:
                 question = user_input or "Summarize this file."
-                bot_reply = answer_from_context(question, extracted_text[:MAX_CONTEXT_CHARS], FILE_SYSTEM_PROMPT)
+                bot_reply = answer_from_context(
+                    question,
+                    extracted_text[:MAX_CONTEXT_CHARS],
+                    FILE_SYSTEM_PROMPT,
+                    chat_context=recent_chat_context,
+                )
         elif route == "rag":
             context = get_rag_pipeline().build_context(user_input)
-            bot_reply = answer_from_context(user_input, context, RAG_SYSTEM_PROMPT)
+            bot_reply = answer_from_context(
+                user_input,
+                context,
+                RAG_SYSTEM_PROMPT,
+                chat_context=recent_chat_context,
+            )
         else:
-            bot_reply = call_text_model(GENERAL_SYSTEM_PROMPT, user_input, temperature=0.2)
+            general_prompt = user_input
+            if recent_chat_context:
+                general_prompt = (
+                    f"Recent conversation:\n{recent_chat_context}\n\n"
+                    f"Current user message:\n{user_input}\n\n"
+                    "Use the recent conversation only when it helps resolve follow-up references."
+                )
+            bot_reply = call_text_model(GENERAL_SYSTEM_PROMPT, general_prompt, temperature=0.2)
     except Exception as exc:
         logger.exception("Request handling failed: %s", exc)
         bot_reply = (

@@ -36,7 +36,7 @@ def direct_fact_answer(query, context):
     return None
 
 
-def answer_from_context(query, context, system_prompt):
+def answer_from_context(query, context, system_prompt, chat_context=""):
     if not context.strip():
         return "I could not find the answer in the available source material."
 
@@ -44,8 +44,19 @@ def answer_from_context(query, context, system_prompt):
     if fact_answer:
         return fact_answer
 
+    conversation_block = ""
+    if chat_context.strip():
+        conversation_block = f"""
+Recent conversation:
+{chat_context}
+
+Use the recent conversation only to resolve follow-up references such as "it", "they", or "that club".
+Do not let it override the source context.
+
+"""
+
     prompt = f"""
-Context:
+{conversation_block}Context:
 {context}
 
 Question:

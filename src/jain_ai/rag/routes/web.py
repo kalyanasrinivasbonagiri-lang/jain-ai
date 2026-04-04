@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
-from ..services.chat_service import handle_chat_turn
-from ..services.session_service import clear_chat_history, get_chat_history
+from ...services.chat_service import handle_chat_turn
+from ...services.session_service import clear_chat_history, get_chat_history
 
 
 web_bp = Blueprint("web", __name__)

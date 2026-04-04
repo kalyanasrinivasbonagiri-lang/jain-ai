@@ -61,6 +61,12 @@ Before indexing, place your academic PDFs in `data/raw/academics/`.
 Architecture diagram:
 
 ![Jain AI architecture](jain_ai_structure_clean.svg)
+
+Request flow:
+
+![Jain AI request flow](jain_ai_request_flow.svg)
+
+If you want, you can later replace these with UI screenshots or a short demo GIF.
 ---
 
 ## Architecture

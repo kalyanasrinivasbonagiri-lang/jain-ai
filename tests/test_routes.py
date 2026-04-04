@@ -16,3 +16,18 @@ def test_home_route_get():
     client = app.test_client()
     response = client.get("/")
     assert response.status_code == 200
+
+
+def test_missing_route_returns_404_not_500():
+    app = create_app()
+    client = app.test_client()
+    response = client.get("/does-not-exist")
+    assert response.status_code == 404
+
+
+def test_favicon_route_is_available():
+    app = create_app()
+    client = app.test_client()
+    response = client.get("/favicon.ico")
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/static/favicon.svg")

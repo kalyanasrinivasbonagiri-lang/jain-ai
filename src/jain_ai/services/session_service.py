@@ -1,11 +1,39 @@
+import time
+
 from flask import session
 
-from ..constants.settings import MAX_SESSION_MESSAGES, SESSION_CHAT_KEY
+from ..constants.settings import (
+    MAX_SESSION_CONTEXT_MESSAGES,
+    MAX_SESSION_MESSAGES,
+    SESSION_CHAT_KEY,
+    SESSION_LAST_ACTIVITY_KEY,
+    SESSION_TIMEOUT_MINUTES,
+)
+
+
+def _now_ts():
+    return int(time.time())
+
+
+def _is_session_expired():
+    last_activity = session.get(SESSION_LAST_ACTIVITY_KEY)
+    if not isinstance(last_activity, int):
+        return False
+    timeout_seconds = SESSION_TIMEOUT_MINUTES * 60
+    return (_now_ts() - last_activity) > timeout_seconds
+
+
+def touch_session_activity():
+    session[SESSION_LAST_ACTIVITY_KEY] = _now_ts()
+    session.modified = True
 
 
 def ensure_chat_history():
+    if _is_session_expired():
+        clear_chat_history()
     if SESSION_CHAT_KEY not in session or not isinstance(session[SESSION_CHAT_KEY], list):
         session[SESSION_CHAT_KEY] = []
+    touch_session_activity()
 
 
 def get_chat_history():
@@ -26,4 +54,17 @@ def append_chat_message(role, message):
 
 def clear_chat_history():
     session[SESSION_CHAT_KEY] = []
-    session.modified = True
+    touch_session_activity()
+
+
+def get_recent_chat_context(max_messages=MAX_SESSION_CONTEXT_MESSAGES):
+    chat_history = get_chat_history()
+    if not chat_history:
+        return ""
+
+    recent_messages = chat_history[-max_messages:]
+    formatted_lines = []
+    for role, message in recent_messages:
+        speaker = "User" if role == "user" else "Assistant"
+        formatted_lines.append(f"{speaker}: {message}")
+    return "\n".join(formatted_lines)
