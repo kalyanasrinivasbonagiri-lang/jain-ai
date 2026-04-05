@@ -1,6 +1,7 @@
 import os
 
 from langchain_community.document_loaders import PyMuPDFLoader
+from langchain_core.documents import Document
 
 from ..config import PROCESSED_FILES_PATH
 from ..utils.logging_utils import get_logger
@@ -9,21 +10,24 @@ from ..utils.logging_utils import get_logger
 logger = get_logger("jain_ai.rag.loaders")
 
 
-def list_pdf_files(folder_path):
+SUPPORTED_SOURCE_EXTENSIONS = (".pdf", ".txt")
+
+
+def list_source_files(folder_path):
     if not os.path.isdir(folder_path):
         logger.warning("Data folder not found: %s", folder_path)
         return []
 
     try:
-        pdf_files = [
+        source_files = [
             file_name for file_name in os.listdir(folder_path)
-            if file_name.lower().endswith(".pdf")
+            if file_name.lower().endswith(SUPPORTED_SOURCE_EXTENSIONS)
         ]
     except OSError as exc:
         logger.exception("Could not read data folder '%s': %s", folder_path, exc)
         return []
 
-    return sorted(pdf_files)
+    return sorted(source_files)
 
 
 def load_processed_files():
@@ -70,14 +74,51 @@ def load_pdfs_by_name(folder_path, file_names):
     return loaded_docs
 
 
-def load_new_pdfs(folder_path, processed_files):
-    all_pdf_files = list_pdf_files(folder_path)
-    new_pdf_files = [file_name for file_name in all_pdf_files if file_name not in processed_files]
+def load_texts_by_name(folder_path, file_names):
+    loaded_docs = []
 
-    if not new_pdf_files:
+    for file_name in sorted(file_names):
+        full_path = os.path.join(folder_path, file_name)
+
+        try:
+            with open(full_path, "r", encoding="utf-8") as file_obj:
+                content = file_obj.read()
+        except OSError as exc:
+            logger.warning("Skipping unreadable text file '%s': %s", file_name, exc)
+            continue
+
+        if not content.strip():
+            logger.warning("Skipping empty text file '%s'", file_name)
+            continue
+
+        loaded_docs.append(
+            Document(
+                page_content=content,
+                metadata={
+                    "source": file_name,
+                    "file_path": full_path,
+                    "page_number": 0,
+                },
+            )
+        )
+
+    return loaded_docs
+
+
+def load_documents_by_name(folder_path, file_names):
+    pdf_files = [file_name for file_name in file_names if file_name.lower().endswith(".pdf")]
+    text_files = [file_name for file_name in file_names if file_name.lower().endswith(".txt")]
+    return load_pdfs_by_name(folder_path, pdf_files) + load_texts_by_name(folder_path, text_files)
+
+
+def load_new_documents(folder_path, processed_files):
+    all_source_files = list_source_files(folder_path)
+    new_source_files = [file_name for file_name in all_source_files if file_name not in processed_files]
+
+    if not new_source_files:
         return [], processed_files
 
-    new_docs = load_pdfs_by_name(folder_path, new_pdf_files)
+    new_docs = load_documents_by_name(folder_path, new_source_files)
     successfully_loaded_files = {doc.metadata["source"] for doc in new_docs}
 
     if successfully_loaded_files:
@@ -85,11 +126,11 @@ def load_new_pdfs(folder_path, processed_files):
         processed_files.update(successfully_loaded_files)
         save_processed_files(processed_files)
 
-    for file_name in sorted(set(new_pdf_files) - successfully_loaded_files):
-        logger.warning("PDF was not marked as processed because it could not be loaded: %s", file_name)
+    for file_name in sorted(set(new_source_files) - successfully_loaded_files):
+        logger.warning("Source file was not marked as processed because it could not be loaded: %s", file_name)
 
     return new_docs, processed_files
 
 
-def load_all_pdfs(folder_path):
-    return load_pdfs_by_name(folder_path, list_pdf_files(folder_path))
+def load_all_documents(folder_path):
+    return load_documents_by_name(folder_path, list_source_files(folder_path))

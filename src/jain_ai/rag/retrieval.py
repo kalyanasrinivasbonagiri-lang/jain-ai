@@ -57,11 +57,20 @@ def build_context(query, docs, db=None, source_docs=None):
     keyword_hits = keyword_search(query, active_docs, limit=KEYWORD_LIMIT)
     combined = []
     seen = set()
+    ranked_chunks = []
 
-    for chunk in retrieved + keyword_hits:
+    for index, chunk in enumerate(retrieved):
+        ranked_chunks.append((100 - index, chunk))
+
+    for index, chunk in enumerate(keyword_hits):
+        ranked_chunks.append((60 - index, chunk))
+
+    ranked_chunks.sort(key=lambda item: item[0], reverse=True)
+
+    for _, chunk in ranked_chunks:
         content = chunk.page_content.strip()
         if content and content not in seen:
             seen.add(content)
             combined.append(content)
 
-    return "\n\n".join(combined[:5])
+    return "\n\n".join(combined[:6])

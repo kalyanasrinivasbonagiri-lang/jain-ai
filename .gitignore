@@ -5,3 +5,5 @@ __pycache__/
 storage/vector_db/
 storage/logs/
 storage/cache/
+storage/processed_files.txt
+storage/embedding_model.txt

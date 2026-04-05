@@ -1,0 +1,53 @@
+JAIN UNIVERSITY PLACEMENTS DATA
+Faculty: FET
+Program Level: UG
+Year: 2026
+
+SUMMARY
+Jain University has a strong placement ecosystem with training in aptitude, coding, and interviews.
+The placement cell supports internships, pre-placement offers, and preparation for product-based companies.
+
+PLACEMENT STATISTICS
+Batch Size: 1264
+UG Applied Students: 1083
+Eligible Students: 707
+Ineligible Students: 376
+UG Placement Offers: 838
+Total Single Offers: 661
+Yet to be Placed: 46
+Placement Percentage: 93.49%
+
+CTC DETAILS
+Highest CTC (Dashboard): 60 LPA
+Highest CTC (Overall Record): 81 LPA
+Highest Package: 81 LPA
+Average CTC Range: 5 LPA - 8 LPA
+Average Package: 5 LPA - 8 LPA
+Average CTC (Dashboard): 7.54 LPA
+Lowest CTC: 4 LPA
+
+TOP RECRUITERS
+Amazon
+Microsoft
+Infosys
+TCS
+Wipro
+Accenture
+
+PLACEMENT FEATURES
+Strong placement cell with continuous training
+Focus on aptitude, coding, and interviews
+Internship opportunities with startups and top companies
+Pre-placement offers (PPOs) available
+Focus on product-based companies
+Special emphasis for AIML and Computer Science students
+
+QUICK ANSWERS
+Highest package in Jain University: 81 LPA
+Highest CTC overall record: 81 LPA
+Highest CTC dashboard: 60 LPA
+Average package in Jain University: 5 LPA - 8 LPA
+Average CTC dashboard: 7.54 LPA
+Lowest CTC in Jain University: 4 LPA
+Placement percentage in Jain University: 93.49%
+Top recruiters at Jain University: Amazon, Microsoft, Infosys, TCS, Wipro, Accenture

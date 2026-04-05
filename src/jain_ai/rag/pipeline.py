@@ -1,4 +1,3 @@
-import os
 import threading
 
 from ..constants.settings import APP_NAME
@@ -36,7 +35,7 @@ class RAGPipeline:
                     self.docs,
                     self.vector_store_ready,
                     self.last_init_error,
-                ) = initialize_vector_resources(os.environ.get("OPENAI_API_KEY"))
+                ) = initialize_vector_resources()
             except Exception as exc:
                 logger.exception("Embedding setup failed, using keyword-only retrieval: %s", exc)
                 self.last_init_error = str(exc)

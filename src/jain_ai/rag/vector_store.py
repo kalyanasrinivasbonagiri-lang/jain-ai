@@ -1,5 +1,5 @@
 from langchain_chroma import Chroma
-from langchain_openai import OpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 from ..config import VECTOR_DB_DIR
 from ..constants.settings import EMBEDDING_MODEL
@@ -9,8 +9,11 @@ from ..utils.logging_utils import get_logger
 logger = get_logger("jain_ai.rag.vector_store")
 
 
-def create_embeddings(openai_api_key):
-    return OpenAIEmbeddings(model=EMBEDDING_MODEL, api_key=openai_api_key)
+def create_embeddings():
+    return HuggingFaceEmbeddings(
+        model_name=EMBEDDING_MODEL,
+        model_kwargs={"local_files_only": True},
+    )
 
 
 def load_vector_store(embeddings):

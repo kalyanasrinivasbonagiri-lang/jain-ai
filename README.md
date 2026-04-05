@@ -127,7 +127,7 @@ jain-ai/
 - Python 3.11 or newer
 - `uv` recommended for dependency management
 - Groq API key for chat and OCR
-- OpenAI API key for embedding-based retrieval
+- Hugging Face sentence-transformer model for embedding-based retrieval
 
 ### 2. Install dependencies
 
@@ -141,7 +141,7 @@ Or with a manual virtual environment:
 python -m venv .venv
 .venv\Scripts\activate        # Windows
 # source .venv/bin/activate   # macOS/Linux
-pip install flask groq langchain langchain-chroma langchain-community langchain-openai langchain-text-splitters chromadb pymupdf pillow pytest
+pip install flask groq langchain langchain-chroma langchain-community langchain-huggingface langchain-text-splitters chromadb pymupdf pillow pytest sentence-transformers
 ```
 
 Note:
@@ -155,7 +155,6 @@ Copy `.env.example` to `.env` and fill in your keys:
 
 ```env
 GROQ_API_KEY=your-groq-api-key
-OPENAI_API_KEY=your-openai-api-key
 FLASK_SECRET_KEY=a-long-random-secret
 HOST=0.0.0.0
 PORT=5000
@@ -166,7 +165,7 @@ SESSION_COOKIE_SECURE=false
 Notes:
 
 - `GROQ_API_KEY` is required for chat and OCR-assisted extraction
-- `OPENAI_API_KEY` is required for semantic retrieval with embeddings
+- Embeddings now run locally with Hugging Face and do not require an OpenAI API key
 - Default max upload size is 12 MB
 - `.env` should stay local and never be committed
 
@@ -266,7 +265,7 @@ Current defaults include:
 - Max upload size: `12 MB`
 - Text model: `openai/gpt-oss-120b`
 - Vision model: `meta-llama/llama-4-scout-17b-16e-instruct`
-- Embedding model: `text-embedding-3-small`
+- Embedding model: `sentence-transformers/all-MiniLM-L6-v2`
 
 Persistent and generated directories:
 
@@ -350,7 +349,7 @@ Suggested reading order for new contributors:
 
 - Flask
 - Chroma
-- OpenAI Embeddings
+- Hugging Face Embeddings
 - Groq
 - PyMuPDF
 - Pillow
