@@ -1,0 +1,54 @@
+DEPARTMENT INFORMATION
+Department Name: Department of Computer Science and Engineering
+Program Name: Bachelor of Technology in Computer Science and Engineering
+Specialization: Computer Science and Engineering(cse core)
+Degree Type: Undergraduate (B.Tech)
+Duration: 4 Years (8 Semesters)
+Campus: jain global campus Kanakapura Main Road, Ramanagara District - 562112
+Academic Year: 2024-2028
+
+
+SEMESTER CREDIT SUMMARY
+
+Semester 1
+Number of Subjects: 10
+Total Credits: 19
+
+Semester 2
+Number of Subjects: 9
+Total Credits: 22
+
+Semester 3
+Number of Subjects: 9
+Total Credits: 18
+
+Semester 4
+Number of Subjects: 10
+Total Credits: 23
+
+Semester 5
+Number of Subjects: 10
+Total Credits: 20
+
+Semester 6
+Number of Subjects: 8
+Total Credits: 22
+
+Semester 7
+Number of Subjects: 8
+Total Credits: 22
+
+Semester 8
+Number of Subjects: 5
+Total Credits: 16
+
+
+PROGRAM TOTALS
+Total Number of Subjects: 69
+Total Program Credits: 162
+
+
+IMPORTANT NOTES
+- Minimum credit requirement: 160 credits :contentReference[oaicite:0]{index=0}
+- Internship / Project details: Internship in Semester IV, VI and VIII; Mini Project in Semester VII; Research/Project work in final semester
+- Curriculum follows CBCS including Core, DSE, OE, SEC, Internship and Project components; subject to modification based on Board of Studies and industry requirements

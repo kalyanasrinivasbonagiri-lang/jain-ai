@@ -1,0 +1,51 @@
+DEPARTMENT INFORMATION
+Department Name: Computer Science and Engineering
+Program Name: Bachelor of Technology in Computer Science and Engineering
+Specialization: Artificial Intelligence and Data Engineering
+Degree Type: B.Tech
+Duration: 4 Years (8 Semesters)
+Campus: jain global campus Kanakapura Main Road, Ramanagara District - 562112
+Academic Year: 2024 onwards
+
+SEMESTER CREDIT SUMMARY
+
+Semester 1
+Number of Subjects: 9
+Total Credits: 17
+
+Semester 2
+Number of Subjects: 11
+Total Credits: 24
+
+Semester 3
+Number of Subjects: 11
+Total Credits: 22
+
+Semester 4
+Number of Subjects: 9
+Total Credits: 25
+
+Semester 5
+Number of Subjects: 10
+Total Credits: 20
+
+Semester 6
+Number of Subjects: 7
+Total Credits: 21
+
+Semester 7
+Number of Subjects: 7
+Total Credits: 19
+
+Semester 8
+Number of Subjects: 3
+Total Credits: 14
+
+PROGRAM TOTALS
+Total Number of Subjects: 67
+Total Program Credits: 162
+
+IMPORTANT NOTES
+- Minimum credit requirement: 162 credits
+- Internship / Project details: Internship I (Semester 4), Internship II (Semester 6), Internship III (Semester 8), Mini Project (Semester 7), Research Project (Semester 8)
+- Any curriculum flexibility notes: Choice Based Credit System (CBCS) with electives (OE, DSE), skill enhancement courses, and curriculum subject to modification based on industry and academic recommendations

@@ -1,0 +1,53 @@
+CSE (Artificial Intelligence & Machine Learning)
+DEPARTMENT INFORMATION:
+Department Name: Department of Computer Science and Engineering
+Program Name: Bachelor of Technology in Computer Science and Engineering
+Specialization: Artificial Intelligence and Machine Learning
+Degree Type: Undergraduate (B.Tech)
+Duration: 4 Years (8 Semesters)
+Campus: Jain Global Campus, Kanakapura Main Road, Ramanagara District - 562112
+Academic Year: 2024-2028
+
+SEMESTER CREDIT SUMMARY:
+Semester 1
+Number of Subjects: 8
+Total Credits: 18
+
+Semester 2
+Number of Subjects: 7
+Total Credits: 21
+
+Semester 3
+Number of Subjects: 7
+Total Credits: 21
+
+Semester 4
+Number of Subjects: 6
+Total Credits: 25
+
+Semester 5
+Number of Subjects: 6
+Total Credits: 19
+
+Semester 6
+Number of Subjects: 3
+Total Credits: 24
+
+Semester 7
+Number of Subjects: 4
+Total Credits: 21
+
+Semester 8
+Number of Subjects: 3
+Total Credits: 16
+
+PROGRAM TOTALS:
+Total Number of Subjects: 44
+Total Program Credits: 165
+
+IMPORTANT NOTES:
+- Program focuses on AI, ML, Data Science, and Industry 4.0 technologies
+- Includes multiple internships (Semesters 4, 6, and 8)
+- Covers advanced topics like Deep Learning, NLP, and Generative AI
+- Includes a mini project in Semester 7
+- Industry training includes Earn While You Learn and a summer internship

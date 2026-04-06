@@ -1,0 +1,60 @@
+DEPARTMENT INFORMATION
+Department Name: Computer Science and Engineering
+Program Name: Bachelor of Technology in Computer Science and Engineering (Blockchain Technology)
+Specialization: Blockchain Technology
+Degree Type: B.Tech
+Duration: 4 Years (8 Semesters)
+Campus: jain global campus Kanakapura Main Road, Ramanagara District - 562112
+Academic Year: 2024 onwards
+
+SEMESTER CREDIT SUMMARY
+
+Semester 1
+Number of Subjects: 10
+Total Credits: 21
+
+Semester 2
+Number of Subjects: 10
+Total Credits: 21
+
+Semester 3
+Number of Subjects: 9
+Total Credits: 19
+
+Semester 4
+Number of Subjects: 9
+Total Credits: 22
+
+Semester 5
+Number of Subjects: 8
+Total Credits: 22
+
+Semester 6
+Number of Subjects: 7
+Total Credits: 22
+
+Semester 7
+Number of Subjects: 7
+Total Credits: 21
+
+Semester 8
+Number of Subjects: 4
+Total Credits: 15
+
+PROGRAM TOTALS
+Total Number of Subjects: 64 (approx.)
+Total Program Credits: 163
+
+IMPORTANT NOTES
+- Minimum credit requirement: 160+ credits
+- Internship / Project details:
+  • Internship (Semester 6)
+  • Mini Project (Semester 7)
+  • Internship + Research Project (Semester 8)
+- Curriculum follows CBCS (Choice Based Credit System)
+- Includes Core, Open Electives (OE), Department Specific Electives (DSE), Skill Enhancement Courses (SEC)
+- Exit options available:
+  • After 1st year → UG Certificate (42 credits)
+  • After 2nd year → UG Diploma (83 credits)
+  • After 3rd year → B.Sc (Engineering) (127 credits)
+  • After 4th year → Full B.Tech Degree (163 credits)

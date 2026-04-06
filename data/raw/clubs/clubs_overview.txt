@@ -1,0 +1,44 @@
+﻿JAIN UNIVERSITY CLUBS OVERVIEW
+
+Jain University has multiple student clubs across technology, culture, research, and innovation. These clubs help students explore their interests, build practical skills, participate in events, and connect with like-minded peers.
+
+ALL CLUBS WITH BRANCH OR SCHOOL
+1. ENIGMA - Branch / School: CSE and CSE STAR
+2. Zigbee - Branch / School: CSE - Internet of Things (IoT)
+3. Cognito Club - Branch / School: CTIS
+4. Cultural Club FET_JU - Branch / School: Culturals
+5. Neuron.AI Club - Branch / School: CSE (AI)
+6. The Cloud Club - Branch / School: Not Mentioned
+7. GRI (Center of Grassroots Research and Innovation) - Branch / School: Research and Innovation
+
+CLUB DETAILS
+1. ENIGMA
+Branch / School: CSE and CSE STAR
+Description: ENIGMA is the technical club for the CSE and CSE STAR branches. It focuses on innovation, technical excellence, and creative problem-solving.
+
+2. Zigbee
+Branch / School: CSE - Internet of Things (IoT)
+Description: Zigbee is the club for IoT students and focuses on emerging technologies, hands-on workshops, research, and technical skill-building.
+
+3. Cognito Club
+Branch / School: CTIS
+Description: Cognito Club is the CTIS club focused on Artificial Intelligence, Machine Learning, innovation, workshops, and hackathons.
+
+4. Cultural Club FET_JU
+Branch / School: Culturals
+Description: The Cultural Club FET_JU provides a platform for students interested in dance, music, photography, visual arts, and other cultural activities.
+
+5. Neuron.AI Club
+Branch / School: CSE (AI)
+Description: Neuron.AI Club is the club for CSE (AI) students and focuses on artificial intelligence, modern technologies, workshops, and technical events.
+
+6. The Cloud Club
+Branch / School: Not Mentioned
+Description: The Cloud Club focuses on cloud computing, DevOps, and modern platforms such as AWS, Azure, and GCP.
+
+7. GRI (Center of Grassroots Research and Innovation)
+Branch / School: Research and Innovation
+Description: GRI focuses on rural impact, grassroots innovation, sustainability, field visits, and research-driven problem-solving.
+
+SUMMARY
+Jain University currently has clubs related to CSE, CSE AI, IoT, CTIS, culture, cloud computing, and research and innovation.

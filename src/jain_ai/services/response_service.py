@@ -14,6 +14,36 @@ def context_has_substance(context, min_chars=120, min_words=20):
     return len(normalized.split()) >= 12
 
 
+def format_club_list_answer(query, context):
+    normalized = query.lower()
+    asks_for_clubs = "club" in normalized or "clubs" in normalized
+    asks_broadly = any(phrase in normalized for phrase in (
+        "is there any club",
+        "is there any clubs",
+        "what clubs",
+        "which clubs",
+        "list all clubs",
+        "clubs in jain",
+    ))
+
+    if not (asks_for_clubs and asks_broadly):
+        return None
+
+    matches = re.findall(
+        r"^\s*\d+\.\s*(.+?)\s*-\s*Branch\s*/\s*School:\s*(.+?)\s*$",
+        context,
+        flags=re.IGNORECASE | re.MULTILINE,
+    )
+
+    if not matches:
+        return None
+
+    lines = ["Yes, Jain University has several student clubs. Here are the clubs with their branch or school:"]
+    for club_name, branch in matches:
+        lines.append(f"- {club_name.strip()} - {branch.strip()}")
+    return "\n".join(lines)
+
+
 def direct_fact_answer(query, context):
     normalized = query.lower()
     compact_context = re.sub(r"\s+", " ", context)
@@ -87,6 +117,10 @@ def direct_fact_answer(query, context):
 def answer_from_context(query, context, system_prompt, chat_context=""):
     if not context.strip():
         return "I could not find the answer in the available source material."
+
+    club_list_answer = format_club_list_answer(query, context)
+    if club_list_answer:
+        return club_list_answer
 
     fact_answer = direct_fact_answer(query, context)
     if fact_answer:

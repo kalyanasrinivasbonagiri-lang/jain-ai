@@ -1,0 +1,20 @@
+﻿CLUB INFORMATION
+Club Name: The Cloud Club
+Branch / School: ctma
+Faculty Coordinator: Dr. Sonal Sharma
+Student Coordinator / Lead / President: Vijay Siddartha M (President)
+
+ABOUT THE CLUB
+Short Description:
+The Cloud Club is a student-led community focused on cloud computing, DevOps, and modern technologies. It provides students with opportunities to learn and innovate through hands-on workshops, events, and collaborative projects in platforms like AWS, Azure, and GCP. The club aims to build technical expertise, industry readiness, and a strong community of cloud enthusiasts.
+
+PAST EVENTS
+Past Events:
+1. Code Mania
+2. TagX 2K25
+
+CONTACT DETAILS
+Instagram: https://www.instagram.com/thecloudclub
+Website: https://www.thecloudclub.in/
+Phone Number: Not Mentioned
+Email: cloudclub17@gmail.com

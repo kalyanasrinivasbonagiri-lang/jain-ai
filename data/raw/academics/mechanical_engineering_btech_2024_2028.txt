@@ -1,0 +1,53 @@
+DEPARTMENT INFORMATION
+Department Name: Department of Mechanical Engineering
+Program Name: Bachelor of Technology in Mechanical Engineering
+Specialization: Mechanical Engineering (Mechatronics / Robotics options available)
+Degree Type: Undergraduate (B.Tech)
+Duration: 4 Years (8 Semesters)
+Campus: Jain Global Campus, Kanakapura Main Road, Ramanagara District - 562112
+Academic Year: 2024-2028
+
+SEMESTER CREDIT SUMMARY
+Semester 1
+Number of Subjects: 9
+Total Credits: 19
+
+Semester 2
+Number of Subjects: 10
+Total Credits: 21
+
+Semester 3
+Number of Subjects: 9
+Total Credits: 19
+
+Semester 4
+Number of Subjects: 8
+Total Credits: 20
+
+Semester 5
+Number of Subjects: 10
+Total Credits: 21
+
+Semester 6
+Number of Subjects: 7
+Total Credits: 21
+
+Semester 7
+Number of Subjects: 11
+Total Credits: 23
+
+Semester 8
+Number of Subjects: 13 (including electives + project)
+Total Credits: 17
+
+PROGRAM TOTALS
+Total Number of Subjects: 77+
+Total Program Credits: 161+
+
+IMPORTANT NOTES
+- Minimum credit requirement is 161+ credits
+- Includes Internships I and II and a Capstone Project
+- Strong industry collaboration (Toyota, Tata Technologies, IMTMA, etc.)
+- Focus on core mechanical, thermal, design, and manufacturing domains
+- Includes Project Centric Learning (TDPCL) every year
+- Specializations are available in Mechatronics and Robotics

@@ -19,10 +19,14 @@ def list_source_files(folder_path):
         return []
 
     try:
-        source_files = [
-            file_name for file_name in os.listdir(folder_path)
-            if file_name.lower().endswith(SUPPORTED_SOURCE_EXTENSIONS)
-        ]
+        source_files = []
+        for root, _, files in os.walk(folder_path):
+            for file_name in files:
+                if not file_name.lower().endswith(SUPPORTED_SOURCE_EXTENSIONS):
+                    continue
+                full_path = os.path.join(root, file_name)
+                relative_path = os.path.relpath(full_path, folder_path)
+                source_files.append(relative_path)
     except OSError as exc:
         logger.exception("Could not read data folder '%s': %s", folder_path, exc)
         return []

@@ -1,0 +1,127 @@
+DEPARTMENT INFORMATION
+Department Name: Computer Science and Engineering
+Program Name: Bachelor of Technology in Computer Science & Engineering (Cyber Physical Systems)
+Specialization: Cyber Physical Systems (CPS)
+Degree Type: B.Tech
+Duration: 4 Years (8 Semesters)
+Campus: jain global campus Kanakapura Main Road, Ramanagara District - 562112
+Academic Year: 2024 – 2028
+
+Semester 1
+Number of Subjects: 10
+Total Credits: 19
+
+Semester 2
+Number of Subjects: 9
+Total Credits: 22
+
+Semester 3
+Number of Subjects: 10
+Total Credits: 23
+
+Semester 4
+Number of Subjects: 9
+Total Credits: 21
+
+Semester 5
+Number of Subjects: 9
+Total Credits: 20
+
+Semester 6
+Number of Subjects: 8
+Total Credits: 22
+
+Semester 7
+Number of Subjects: 8
+Total Credits: 20
+
+Semester 8
+Number of Subjects: 5
+Total Credits: 17
+
+PROGRAM TOTALS
+Total Number of Subjects: ~68
+Total Program Credits: 164
+
+IMPORTANT NOTES (from Page 17)
+
+- Duration: 4 years (8 semesters) :contentReference[oaicite:0]{index=0}
+- Lateral entry: 3 years (6 semesters)
+- Maximum completion time: 6 years
+- Minimum credits required: 164 credits :contentReference[oaicite:1]{index=1}
+
+INTERNSHIP & PROJECT STRUCTURE
+
+• Internship 1 – Semester 4 (4 credits)  
+• Internship 2 – Semester 6 (4 credits)  
+• Internship 3 – Semester 8 (6 credits)  
+• Mini Project – Semester 7 (3 credits)  
+• Research Project – Semester 8  
+
+CURRICULUM STRUCTURE (Page 20)
+
+• BS – Basic Science  
+• ES – Engineering Science  
+• HSS – Humanities & Social Science  
+• Core – Core Subjects  
+• DSE – Department Specific Electives  
+• OE – Open Electives  
+• SEC – Skill Enhancement Courses  
+• INT – Internship / Projects  
+
+KEY SUBJECT HIGHLIGHTS (from Semester tables – Pages 22–25)
+
+Core Technical Subjects:
+- Python Programming  
+- Data Structures  
+- DBMS  
+- Operating Systems  
+- Computer Organization  
+- Software Engineering  
+
+Specialized CPS Subjects:
+- Introduction to Cyber Physical Systems  
+- Sensor Technologies  
+- Microprocessors & Microcontrollers  
+- IoT (Internet of Things)  
+- Cloud Computing & Virtualization  
+- AI & Machine Learning  
+- Cryptography & Network Security  
+- Wireless Sensor Networks  
+
+Advanced & Final Year:
+- Cyber Physical System Design  
+- Distributed Real-Time Systems  
+- Research Project  
+
+ELECTIVE TRACKS (Page 26)
+
+Track 1: Cyber Security  
+Track 2: IoT Development  
+Track 3: Computational Intelligence  
+
+ASSESSMENT SYSTEM (Page 27–28)
+
+• 50% Continuous Assessment (CA)
+• 50% End Semester Exam (ESE)
+
+Grading:
+O – 10  
+A+ – 9  
+A – 8  
+B+ – 7  
+B – 6  
+C – 5  
+P – 4  
+
+Minimum SGPA to pass: 4.0
+
+PLACEMENT INSIGHT (Page 29)
+
+• No backlog required for placement eligibility  
+• Minimum 80–85% attendance required  
+• Categories:
+  - Super Dream (>10 LPA)
+  - Dream (6–10 LPA)
+  - Core (>3.5 LPA)
+  - Mass Recruiters (4–6 LPA)
