@@ -669,6 +669,17 @@
       border-color: var(--border);
     }
 
+    .bubble.assistant a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: break-all;
+    }
+
+    .bubble.assistant a:hover {
+      filter: brightness(1.08);
+    }
+
     .bubble.user {
       background: var(--user-bubble);
       color: var(--accent-text);
@@ -1413,6 +1424,39 @@
       }
     }
 
+    function escapeHtml(value) {
+      return value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function linkifyAssistantMessage(message) {
+      const markdownLinkPattern = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+      const urlPattern = /(^|[\s(])((https?:\/\/[^\s<]+))/g;
+
+      let html = escapeHtml(message);
+      html = html.replace(markdownLinkPattern, (_match, label, url) => {
+        const safeLabel = escapeHtml(label);
+        const safeUrl = escapeHtml(url);
+        return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeLabel}</a>`;
+      });
+      html = html.replace(urlPattern, (_match, prefix, url) => {
+        const safeUrl = escapeHtml(url);
+        return `${prefix}<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}</a>`;
+      });
+      return html.replace(/\n/g, '<br>');
+    }
+
+    function enhanceAssistantLinks() {
+      document.querySelectorAll('.bubble.assistant').forEach((bubble) => {
+        const messageText = bubble.textContent || '';
+        bubble.innerHTML = linkifyAssistantMessage(messageText);
+      });
+    }
+
     document.getElementById('chatForm').addEventListener('submit', () => {
       openChatExperience();
       typingIndicator.classList.add('show');
@@ -1427,6 +1471,7 @@
     }
 
     window.addEventListener('load', () => {
+      enhanceAssistantLinks();
       autoGrow(qInput);
       chatScroll.scrollTop = chatScroll.scrollHeight;
       if (landingScreen && !landingScreen.classList.contains('hidden')) {

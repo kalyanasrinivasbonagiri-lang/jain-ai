@@ -1,5 +1,4 @@
 from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
 
 from ..config import VECTOR_DB_DIR
 from ..constants.settings import EMBEDDING_MODEL
@@ -9,8 +8,30 @@ from ..utils.logging_utils import get_logger
 logger = get_logger("jain_ai.rag.vector_store")
 
 
+def _resolve_embeddings_class():
+    try:
+        from langchain_huggingface import HuggingFaceEmbeddings
+
+        return HuggingFaceEmbeddings
+    except ImportError:
+        try:
+            from langchain_community.embeddings import HuggingFaceEmbeddings
+
+            logger.warning(
+                "Using deprecated langchain_community HuggingFaceEmbeddings fallback. "
+                "Install langchain-huggingface to match the preferred setup."
+            )
+            return HuggingFaceEmbeddings
+        except ImportError as exc:
+            raise RuntimeError(
+                "HuggingFace embeddings are unavailable. Install `langchain-huggingface` "
+                "or provide the legacy `langchain-community` embedding package."
+            ) from exc
+
+
 def create_embeddings():
-    return HuggingFaceEmbeddings(
+    embeddings_class = _resolve_embeddings_class()
+    return embeddings_class(
         model_name=EMBEDDING_MODEL,
         model_kwargs={"local_files_only": True},
     )

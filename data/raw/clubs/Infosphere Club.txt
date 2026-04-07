@@ -1,0 +1,24 @@
+CLUB INFORMATION
+Club Name: Infosphere Club
+Branch / School: Department of Information Science and Engineering, Jain (Deemed-to-be University)
+Faculty Coordinator: Dr. Lokaiah Pullagura
+Student Coordinator / Lead / President: Varshini
+
+ABOUT THE CLUB
+Short Description:
+Infosphere is a technical student club under the Department of Information Science and Engineering at Jain (Deemed-to-be University). It empowers students through technical excellence, innovation, and entrepreneurial thinking by providing a collaborative platform for workshops, coding challenges, and real-world projects. The club also promotes leadership, teamwork, and interdisciplinary learning to help students build impactful technological solutions.
+
+PAST EVENTS
+Past Events:
+1. Building LLM from Scratch Workshop
+2. Reignite: The Infosphere Comeback
+3. Technical Workshops on AI and ML
+4. Coding Challenges and Competitions
+5. Real-World Project Collaborations
+6. Tech Talks and Seminars
+
+CONTACT DETAILS
+Instagram: https://www.instagram.com/infosphere_ise
+Website: https://infosphere-test.vercel.app
+Phone Number: Not mentioned
+Email: infosphereclub.ise@gmail.com

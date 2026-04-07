@@ -11,6 +11,14 @@ logger = get_logger("jain_ai.rag.loaders")
 
 
 SUPPORTED_SOURCE_EXTENSIONS = (".pdf", ".txt")
+IGNORED_SOURCE_KEYWORDS = ("template", "example", "sample")
+
+
+def should_index_source_file(file_name):
+    lower_name = file_name.lower()
+    if not lower_name.endswith(SUPPORTED_SOURCE_EXTENSIONS):
+        return False
+    return not any(keyword in lower_name for keyword in IGNORED_SOURCE_KEYWORDS)
 
 
 def list_source_files(folder_path):
@@ -22,7 +30,7 @@ def list_source_files(folder_path):
         source_files = []
         for root, _, files in os.walk(folder_path):
             for file_name in files:
-                if not file_name.lower().endswith(SUPPORTED_SOURCE_EXTENSIONS):
+                if not should_index_source_file(file_name):
                     continue
                 full_path = os.path.join(root, file_name)
                 relative_path = os.path.relpath(full_path, folder_path)
