@@ -135,6 +135,8 @@ jain-ai/
 uv sync
 ```
 
+This project is intended to run from the project-managed environment created by `uv`. For the most reliable setup, use `uv run ...` commands or the local virtual environment interpreter instead of a global Python installation.
+
 Or with a manual virtual environment:
 
 ```bash
@@ -189,6 +191,12 @@ uv run python scripts/index_data.py
 uv run app.py
 ```
 
+Recommended interpreter:
+
+```text
+.venv\Scripts\python.exe
+```
+
 By default, the app runs at:
 
 ```text
@@ -202,6 +210,12 @@ If `uv` has a cache permission issue, run the app directly through the virtual e
 ```bash
 .\.venv\Scripts\python.exe app.py
 ```
+
+Reviewer note:
+
+- After cloning the repository, run `uv sync`
+- Start the app with `uv run app.py` or `.\.venv\Scripts\python.exe app.py`
+- Avoid running `python app.py` from a global/system interpreter, because that may use a different dependency set than the project environment
 
 Health check:
 
@@ -252,6 +266,13 @@ uv run python scripts/seed_data.py
 
 # Run tests
 uv run pytest
+```
+
+If you prefer not to use `uv run`, activate the local virtual environment or call the interpreter directly:
+
+```bash
+.\.venv\Scripts\python.exe app.py
+.\.venv\Scripts\python.exe -m pytest
 ```
 
 ---

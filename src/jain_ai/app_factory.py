@@ -34,7 +34,11 @@ def create_app():
         logger.warning("Rejected oversized upload from %s", request.remote_addr)
         return render_template(
             "index.html",
-            chat_history=get_chat_history() + [["bot", f"File is too large. Maximum upload size is {MAX_FILE_SIZE_MB} MB."]],
+            chat_history=get_chat_history() + [{
+                "role": "bot",
+                "message": f"File is too large. Maximum upload size is {MAX_FILE_SIZE_MB} MB.",
+                "attachment": None,
+            }],
         ), 413
 
     @app.errorhandler(Exception)
@@ -42,7 +46,11 @@ def create_app():
         logger.exception("Unhandled application error: %s", error)
         return render_template(
             "index.html",
-            chat_history=get_chat_history() + [["bot", "Something went wrong. Please try again in a moment."]],
+            chat_history=get_chat_history() + [{
+                "role": "bot",
+                "message": "Something went wrong. Please try again in a moment.",
+                "attachment": None,
+            }],
         ), 500
 
     return app

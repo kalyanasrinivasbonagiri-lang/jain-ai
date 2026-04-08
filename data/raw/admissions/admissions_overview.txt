@@ -20,12 +20,12 @@ Final Year Applicants: Candidates awaiting Class XII or equivalent results may a
 NIOS Eligibility: NIOS candidates are eligible to apply
 
 ENTRANCE SCORES ACCEPTED
-- UNIGAUGE
+- JET
 - JEE
 - ComedK
 
 APPLICATION PROCESS/how to apply for jain /where to apply for jain university
-Step 1: New User Registration
+Step 1: New User Registration in this website :https://jgigroup.in/btech2026/
 - Enter all the relevant details carefully.
 - An email will be sent by Jain University to authenticate the email ID.
 - Authentication is required to continue the admission application process.
@@ -56,7 +56,6 @@ Class X Mark Sheet Maximum Size: 100 KB
 IMPORTANT LINKS
 Application Link: https://jgigroup.in/btech2026/
 Cancellation and Refund Policy: https://www.jainuniversity.ac.in/admission/cancellation-and-refund-rules
-
 CANCELLATION NOTE
 All cancellations shall be processed as per the Jain University cancellation policy.
 https://www.jainuniversity.ac.in/admission/cancellation-and-refund-rules this the link for cancellation policy
@@ -69,7 +68,7 @@ Ramanagara District - 562112
 
 QUICK ANSWERS
 How to apply for B.Tech admission at Jain University: Apply online only through the official application portal
-Which entrance scores are accepted for B.Tech admission: UNIGAUGE, JEE, and ComedK
+Which entrance scores are accepted for B.Tech admission: JET, JEE, and ComedK
 What is the application fee: Rs. 600 inclusive of GST
 What is the course duration for B.Tech: 4 years and 8 semesters
 Can students waiting for Class 12 results apply: Yes

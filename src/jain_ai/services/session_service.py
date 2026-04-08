@@ -15,6 +15,25 @@ def _now_ts():
     return int(time.time())
 
 
+def _normalize_history_entry(entry):
+    if isinstance(entry, (list, tuple)) and len(entry) >= 2:
+        return {
+            "role": entry[0],
+            "message": entry[1],
+        }
+
+    if isinstance(entry, dict):
+        return {
+            "role": entry.get("role", ""),
+            "message": entry.get("message", ""),
+        }
+
+    return {
+        "role": "",
+        "message": str(entry or ""),
+    }
+
+
 def _is_session_expired():
     last_activity = session.get(SESSION_LAST_ACTIVITY_KEY)
     if not isinstance(last_activity, int):
@@ -38,17 +57,23 @@ def ensure_chat_history():
 
 def get_chat_history():
     ensure_chat_history()
-    return session[SESSION_CHAT_KEY]
+    chat_history = [_normalize_history_entry(entry) for entry in session[SESSION_CHAT_KEY]]
+    session[SESSION_CHAT_KEY] = chat_history
+    return chat_history
 
 
 def save_chat_history(chat_history):
-    session[SESSION_CHAT_KEY] = chat_history[-MAX_SESSION_MESSAGES:]
+    normalized_history = [_normalize_history_entry(entry) for entry in chat_history[-MAX_SESSION_MESSAGES:]]
+    session[SESSION_CHAT_KEY] = normalized_history
     session.modified = True
 
 
-def append_chat_message(role, message):
+def append_chat_message(role, message, attachment=None):
     chat_history = get_chat_history()
-    chat_history.append([role, message])
+    chat_history.append({
+        "role": role,
+        "message": message,
+    })
     save_chat_history(chat_history)
 
 
@@ -64,7 +89,7 @@ def get_recent_chat_context(max_messages=MAX_SESSION_CONTEXT_MESSAGES):
 
     recent_messages = chat_history[-max_messages:]
     formatted_lines = []
-    for role, message in recent_messages:
-        speaker = "User" if role == "user" else "Assistant"
-        formatted_lines.append(f"{speaker}: {message}")
+    for entry in recent_messages:
+        speaker = "User" if entry["role"] == "user" else "Assistant"
+        formatted_lines.append(f"{speaker}: {entry['message']}")
     return "\n".join(formatted_lines)

@@ -1253,12 +1253,12 @@
           </section>
           {% endif %}
 
-          {% for role, message in chat_history %}
-            {% if role == "user" %}
+          {% for entry in chat_history %}
+            {% if entry.role == "user" %}
             <article class="message-row user">
               <div class="message-body">
                 <div class="message-label">You</div>
-                <div class="bubble user">{{ message }}</div>
+                <div class="bubble user">{{ entry.message }}</div>
               </div>
               <div class="avatar user">YOU</div>
             </article>
@@ -1267,7 +1267,7 @@
               <div class="avatar">AI</div>
               <div class="message-body">
                 <div class="message-label">Jain AI</div>
-                <div class="bubble assistant">{{ message }}</div>
+                <div class="bubble assistant">{{ entry.message }}</div>
               </div>
             </article>
             {% endif %}
@@ -1323,7 +1323,8 @@
 
             <div class="composer-note">
               <span>Press Enter to send and Shift+Enter for a new line.</span>
-              <span>Session context stays only for this active chat.</span>
+              <span>Session context stays only for this active chat
+                jain-ai can make mistakes .</span>
             </div>
           </form>
         </div>
