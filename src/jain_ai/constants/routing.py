@@ -26,6 +26,7 @@ COMMON_QUERY_WORDS = {
     "please", "into", "onto", "does", "did", "been", "being", "name", "details",
     "submitted", "submission", "labactivity", "activity", "lab", "assignment", "pdf",
     "file", "document", "prof", "professor", "sir", "madam", "my", "me", "i",
+    "jain", "university",
 }
 
 RAG_HINTS = {

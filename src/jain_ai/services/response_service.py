@@ -155,6 +155,25 @@ def append_relevant_links(answer, query, context):
     return "\n".join(lines)
 
 
+def append_source_references(answer, source_references):
+    if not source_references:
+        return answer
+
+    lines = [answer.rstrip(), "", "Sources:"]
+    seen = set()
+
+    for source in source_references[:2]:
+        folder = (source or {}).get("folder", "unknown")
+        file_name = (source or {}).get("file", "unknown")
+        key = (folder.lower(), file_name.lower())
+        if key in seen:
+            continue
+        seen.add(key)
+        lines.append(f"- Folder: {folder} | File: {file_name}")
+
+    return "\n".join(lines)
+
+
 def context_has_substance(context, min_chars=120, min_words=20):
     normalized = re.sub(r"\s+", " ", context or "").strip()
     if not normalized:
@@ -266,7 +285,7 @@ def direct_fact_answer(query, context):
     return None
 
 
-def answer_from_context(query, context, system_prompt, chat_context=""):
+def answer_from_context(query, context, system_prompt, chat_context="", source_references=None):
     papers_answer = previous_papers_answer(query)
     if papers_answer:
         return papers_answer
@@ -280,15 +299,15 @@ def answer_from_context(query, context, system_prompt, chat_context=""):
 
     branch_advice = advisory_branch_answer(query, context)
     if branch_advice:
-        return branch_advice
+        return append_source_references(branch_advice, source_references)
 
     club_list_answer = format_club_list_answer(query, context)
     if club_list_answer:
-        return club_list_answer
+        return append_source_references(club_list_answer, source_references)
 
     fact_answer = direct_fact_answer(query, context)
     if fact_answer:
-        return fact_answer
+        return append_source_references(fact_answer, source_references)
 
     conversation_block = ""
     if chat_context.strip():
@@ -312,10 +331,11 @@ Answer using only the context above. If the answer is present, state the exact v
 If the answer is not present, say that the available source material does not contain it.
 """
     answer = call_text_model(system_prompt, prompt, temperature=0.0)
-    return append_relevant_links(answer, query, context)
+    answer = append_relevant_links(answer, query, context)
+    return append_source_references(answer, source_references)
 
 
-def answer_with_fallback(query, context, system_prompt, fallback_prompt, chat_context=""):
+def answer_with_fallback(query, context, system_prompt, fallback_prompt, chat_context="", source_references=None):
     papers_answer = previous_papers_answer(query)
     if papers_answer:
         return papers_answer
@@ -327,4 +347,10 @@ def answer_with_fallback(query, context, system_prompt, fallback_prompt, chat_co
     if not context_has_substance(context):
         return call_text_model(fallback_prompt, query, temperature=0.2)
 
-    return answer_from_context(query, context, system_prompt, chat_context=chat_context)
+    return answer_from_context(
+        query,
+        context,
+        system_prompt,
+        chat_context=chat_context,
+        source_references=source_references,
+    )

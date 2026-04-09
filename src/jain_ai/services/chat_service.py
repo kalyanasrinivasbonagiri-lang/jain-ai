@@ -1,3 +1,5 @@
+import re
+
 from groq import APIConnectionError, APIError, APITimeoutError
 
 from ..constants.prompts import (
@@ -19,6 +21,45 @@ from .upload_service import extract_uploaded_text
 
 
 logger = get_logger("jain_ai.chat_service")
+
+
+def split_compound_question(user_input):
+    normalized = re.sub(r"\s+", " ", (user_input or "").strip())
+    if not normalized:
+        return []
+
+    parts = re.split(r"\s+(?:and|also)\s+(?=(?:what|which|who|where|when|how)\b)", normalized, flags=re.IGNORECASE)
+    cleaned_parts = [part.strip(" ?.") + "?" for part in parts if part.strip()]
+
+    if len(cleaned_parts) <= 1:
+        return []
+
+    return cleaned_parts[:2]
+
+
+def answer_rag_question(query, system_prompt, fallback_prompt, recent_chat_context):
+    context_bundle = get_rag_pipeline().build_context_bundle(query)
+    return answer_with_fallback(
+        query,
+        context_bundle["context"],
+        system_prompt,
+        fallback_prompt,
+        chat_context=recent_chat_context,
+        source_references=context_bundle["sources"],
+    )
+
+
+def answer_compound_rag_question(user_input, system_prompt, fallback_prompt, recent_chat_context):
+    sub_questions = split_compound_question(user_input)
+    if not sub_questions:
+        return None
+
+    answers = []
+    for index, sub_question in enumerate(sub_questions, start=1):
+        answer = answer_rag_question(sub_question, system_prompt, fallback_prompt, recent_chat_context)
+        answers.append(f"{index}. {sub_question}\n{answer}")
+
+    return "\n\n".join(answers)
 
 
 def handle_chat_turn(user_input, file):
@@ -45,31 +86,30 @@ def handle_chat_turn(user_input, file):
                     chat_context=recent_chat_context,
                 )
         elif route == "summarize":
-            context = get_rag_pipeline().build_context(user_input)
-            bot_reply = answer_with_fallback(
+            bot_reply = answer_rag_question(
                 user_input or "Summarize the relevant content.",
-                context,
                 SUMMARIZATION_SYSTEM_PROMPT,
                 NO_CONTEXT_FALLBACK_PROMPT,
-                chat_context=recent_chat_context,
+                recent_chat_context,
             )
         elif route == "rag":
-            context = get_rag_pipeline().build_context(user_input)
-            bot_reply = answer_with_fallback(
+            bot_reply = answer_compound_rag_question(
                 user_input,
-                context,
                 RAG_SYSTEM_PROMPT,
                 NO_CONTEXT_FALLBACK_PROMPT,
-                chat_context=recent_chat_context,
+                recent_chat_context,
+            ) or answer_rag_question(
+                user_input,
+                RAG_SYSTEM_PROMPT,
+                NO_CONTEXT_FALLBACK_PROMPT,
+                recent_chat_context,
             )
         elif route == "follow_up":
-            context = get_rag_pipeline().build_context(user_input)
-            bot_reply = answer_with_fallback(
+            bot_reply = answer_rag_question(
                 user_input,
-                context,
                 FOLLOW_UP_SYSTEM_PROMPT,
                 GENERAL_SYSTEM_PROMPT,
-                chat_context=recent_chat_context,
+                recent_chat_context,
             )
         else:
             general_prompt = user_input
