@@ -57,6 +57,24 @@ def is_general_chat(query):
     return not contains_rag_hint(normalized)
 
 
+def is_small_talk(query):
+    normalized = normalize_query(query)
+
+    if not normalized:
+        return True
+
+    if normalized in GENERAL_CHAT_PATTERNS:
+        return True
+
+    if any(contains_phrase(normalized, phrase) for phrase in GENERAL_CHAT_PATTERNS):
+        return True
+
+    if any(contains_phrase(normalized, phrase) for phrase in BROAD_HELP_PATTERNS):
+        return True
+
+    return False
+
+
 def is_university_query(query):
     normalized = normalize_query(query)
     return contains_rag_hint(normalized)
@@ -87,11 +105,16 @@ def is_summarize_query(query):
     return any(term in normalized for term in summarize_terms)
 
 
-def heuristic_route_request(user_input, uploaded_filename):
+def heuristic_route_request(user_input, uploaded_filename, has_uploaded_context=False):
     if uploaded_filename:
         return "upload"
     if is_summarize_query(user_input):
         return "summarize"
+    if has_uploaded_context:
+        if is_follow_up_query(user_input):
+            return "upload"
+        if user_input and not is_small_talk(user_input) and not is_university_query(user_input):
+            return "upload"
     if is_follow_up_query(user_input):
         return "follow_up"
     if is_general_chat(user_input):
@@ -123,8 +146,8 @@ def parse_route_label(raw_label):
     return None
 
 
-def route_request(user_input, uploaded_filename):
-    heuristic_label = heuristic_route_request(user_input, uploaded_filename)
+def route_request(user_input, uploaded_filename, has_uploaded_context=False):
+    heuristic_label = heuristic_route_request(user_input, uploaded_filename, has_uploaded_context=has_uploaded_context)
 
     try:
         model_label = parse_route_label(
@@ -135,6 +158,8 @@ def route_request(user_input, uploaded_filename):
             )
         )
         if model_label in VALID_ROUTES:
+            if heuristic_label == "upload" and model_label in {"general", "follow_up"}:
+                return "upload"
             return model_label
     except Exception:
         pass

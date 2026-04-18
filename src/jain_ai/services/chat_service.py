@@ -16,7 +16,14 @@ from ..rag.pipeline import get_rag_pipeline
 from ..utils.logging_utils import get_logger
 from .response_service import answer_from_context, answer_with_fallback
 from .routing_service import route_request
-from .session_service import append_chat_message, get_recent_chat_context
+from .session_service import (
+    append_chat_message,
+    clear_uploaded_context,
+    get_recent_chat_context,
+    get_uploaded_context,
+    has_uploaded_context,
+    save_uploaded_context,
+)
 from .upload_service import extract_uploaded_text
 
 
@@ -66,25 +73,41 @@ def handle_chat_turn(user_input, file):
     uploaded_filename = file.filename if file and file.filename else ""
     user_message = user_input or f"Analyze uploaded file: {uploaded_filename}"
     recent_chat_context = get_recent_chat_context()
+    active_uploaded_text, active_uploaded_filename = get_uploaded_context()
     append_chat_message("user", user_message)
 
     try:
-        route = route_request(user_input, uploaded_filename)
+        route = route_request(user_input, uploaded_filename, has_uploaded_context=has_uploaded_context())
 
         if route == "upload":
-            extracted_text, filename, upload_error = extract_uploaded_text(file)
-            if upload_error:
-                bot_reply = upload_error
-            elif not extracted_text or extracted_text == "NO_TEXT_FOUND":
-                bot_reply = f"I could not extract readable text from `{filename}`."
+            if file and uploaded_filename:
+                extracted_text, filename, upload_error = extract_uploaded_text(file)
+                if upload_error:
+                    clear_uploaded_context()
+                    bot_reply = upload_error
+                elif not extracted_text or extracted_text == "NO_TEXT_FOUND":
+                    clear_uploaded_context()
+                    bot_reply = f"I could not extract readable text from `{filename}`."
+                else:
+                    save_uploaded_context(extracted_text, filename)
+                    question = user_input or "Summarize this file."
+                    bot_reply = answer_from_context(
+                        question,
+                        extracted_text[:MAX_CONTEXT_CHARS],
+                        FILE_SYSTEM_PROMPT,
+                        chat_context=recent_chat_context,
+                    )
             else:
-                question = user_input or "Summarize this file."
-                bot_reply = answer_from_context(
-                    question,
-                    extracted_text[:MAX_CONTEXT_CHARS],
-                    FILE_SYSTEM_PROMPT,
-                    chat_context=recent_chat_context,
-                )
+                if not active_uploaded_text:
+                    bot_reply = "Please upload a PDF or image first so I can answer questions about that file."
+                else:
+                    question = user_input or f"Summarize `{active_uploaded_filename or 'the uploaded file'}`."
+                    bot_reply = answer_from_context(
+                        question,
+                        active_uploaded_text[:MAX_CONTEXT_CHARS],
+                        FILE_SYSTEM_PROMPT,
+                        chat_context=recent_chat_context,
+                    )
         elif route == "summarize":
             bot_reply = answer_rag_question(
                 user_input or "Summarize the relevant content.",

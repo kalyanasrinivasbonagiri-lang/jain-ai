@@ -10,7 +10,12 @@ if SRC_DIR not in sys.path:
 
 from flask import Flask, session
 
-from jain_ai.constants.settings import SESSION_CHAT_KEY, SESSION_LAST_ACTIVITY_KEY
+from jain_ai.constants.settings import (
+    SESSION_CHAT_KEY,
+    SESSION_LAST_ACTIVITY_KEY,
+    SESSION_UPLOAD_FILENAME_KEY,
+    SESSION_UPLOAD_TEXT_KEY,
+)
 from jain_ai.services import session_service
 
 
@@ -51,3 +56,18 @@ def test_recent_chat_context_uses_latest_messages():
         assert "Assistant: The coding club meets weekly." in context
         assert "User: Who is the coordinator?" in context
         assert "Assistant: The source does not include that detail." in context
+
+
+def test_clear_chat_history_also_clears_uploaded_context():
+    app = build_test_app()
+
+    with app.test_request_context("/"):
+        session[SESSION_CHAT_KEY] = [["user", "Read this PDF"]]
+        session[SESSION_UPLOAD_TEXT_KEY] = "Extracted PDF text"
+        session[SESSION_UPLOAD_FILENAME_KEY] = "resume.pdf"
+
+        session_service.clear_chat_history()
+
+        assert session_service.get_chat_history() == []
+        assert session.get(SESSION_UPLOAD_TEXT_KEY) is None
+        assert session.get(SESSION_UPLOAD_FILENAME_KEY) is None

@@ -6,6 +6,8 @@ from ..constants.settings import (
     MAX_SESSION_CONTEXT_MESSAGES,
     MAX_SESSION_MESSAGES,
     SESSION_CHAT_KEY,
+    SESSION_UPLOAD_FILENAME_KEY,
+    SESSION_UPLOAD_TEXT_KEY,
     SESSION_LAST_ACTIVITY_KEY,
     SESSION_TIMEOUT_MINUTES,
 )
@@ -68,6 +70,31 @@ def save_chat_history(chat_history):
     session.modified = True
 
 
+def save_uploaded_context(text, filename):
+    session[SESSION_UPLOAD_TEXT_KEY] = (text or "").strip()
+    session[SESSION_UPLOAD_FILENAME_KEY] = (filename or "").strip()
+    session.modified = True
+
+
+def get_uploaded_context():
+    ensure_chat_history()
+    return (
+        (session.get(SESSION_UPLOAD_TEXT_KEY) or "").strip(),
+        (session.get(SESSION_UPLOAD_FILENAME_KEY) or "").strip(),
+    )
+
+
+def has_uploaded_context():
+    text, _ = get_uploaded_context()
+    return bool(text)
+
+
+def clear_uploaded_context():
+    session.pop(SESSION_UPLOAD_TEXT_KEY, None)
+    session.pop(SESSION_UPLOAD_FILENAME_KEY, None)
+    session.modified = True
+
+
 def append_chat_message(role, message, attachment=None):
     chat_history = get_chat_history()
     chat_history.append({
@@ -79,6 +106,7 @@ def append_chat_message(role, message, attachment=None):
 
 def clear_chat_history():
     session[SESSION_CHAT_KEY] = []
+    clear_uploaded_context()
     touch_session_activity()
 
 
