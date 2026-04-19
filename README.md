@@ -13,24 +13,24 @@
 
 ## Overview
 
-Jain AI is designed for document-grounded academic assistance. Instead of relying on generic chatbot responses, it retrieves relevant content from your local academic PDFs, extracts text from uploads when needed, and answers in a conversational interface.
+Jain AI is designed for document-grounded academic assistance. Instead of relying on generic chatbot responses, it retrieves relevant content from your local university source documents, extracts text from uploads when needed, and answers in a conversational interface.
 
 It is a good fit for:
 
 - university information assistants
 - internal academic help desks
-- PDF-based student support tools
+- document-based student support tools
 - document-backed chat interfaces that require traceable answers
 
 ---
 
 ## What It Does
 
-Jain AI is a smart academic assistant built for university contexts. Upload PDFs, ask questions, and get answers backed by your actual documents instead of generic responses.
+Jain AI is a smart academic assistant built for university contexts. Ask questions about your indexed university documents, upload PDFs or images when needed, and get answers backed by your actual source material instead of generic responses.
 
 | Capability | Description |
 |---|---|
-| Document Q&A | Ask questions grounded in local university PDFs using retrieval-augmented generation |
+| Document Q&A | Ask questions grounded in local university `.txt` and `.pdf` sources using retrieval-augmented generation |
 | OCR Support | Extracts text from scanned PDFs and images before querying |
 | Session Chat | Maintains per-browser conversation history across a session |
 | Modular Design | Clean Flask application factory with a package-based structure |
@@ -52,7 +52,7 @@ Then open:
 http://localhost:5000
 ```
 
-Before indexing, place your academic PDFs in `data/raw/academics/`.
+Before indexing, place your source documents under `data/raw/` in the appropriate folders such as `academics/`, `admissions/`, `clubs/`, `hostel/`, or `sports/`.
 
 ---
 
@@ -171,12 +171,16 @@ Notes:
 - Default max upload size is 12 MB
 - `.env` should stay local and never be committed
 
-### 4. Add academic documents
+### 4. Add source documents
 
-Place source PDFs in:
+Place source `.txt` or `.pdf` files anywhere under `data/raw/`. For example:
 
 ```text
 data/raw/academics/
+data/raw/admissions/
+data/raw/clubs/
+data/raw/hostel/
+data/raw/sports/
 ```
 
 Then index them:
@@ -211,6 +215,13 @@ If `uv` has a cache permission issue, run the app directly through the virtual e
 .\.venv\Scripts\python.exe app.py
 ```
 
+The same fallback works for indexing and reindexing:
+
+```bash
+.\.venv\Scripts\python.exe scripts/index_data.py
+.\.venv\Scripts\python.exe scripts/reindex_documents.py
+```
+
 Reviewer note:
 
 - After cloning the repository, run `uv sync`
@@ -227,11 +238,12 @@ http://localhost:5000/health
 
 ## How It Works
 
-1. Academic PDFs are loaded from `data/raw/academics/`
+1. Source `.txt` and `.pdf` documents are loaded from `data/raw/`
 2. Documents are split into chunks and indexed in Chroma
 3. User questions are routed as general chat, RAG, or file-upload requests
 4. Uploaded PDFs and images can go through OCR before answering
-5. Responses are generated using Groq models with document context when available
+5. Relative date phrases like `this week` or `this month` are expanded before retrieval so calendar and event queries match dated source material more reliably
+6. Responses are generated using Groq models with document context when available
 
 ---
 
@@ -258,7 +270,7 @@ uv run python scripts/verify_setup.py
 # Index documents
 uv run python scripts/index_data.py
 
-# Re-index documents after adding or changing PDFs
+# Fully rebuild the vector DB after changing or removing source files
 uv run python scripts/reindex_documents.py
 
 # Seed local data
@@ -274,6 +286,12 @@ If you prefer not to use `uv run`, activate the local virtual environment or cal
 .\.venv\Scripts\python.exe app.py
 .\.venv\Scripts\python.exe -m pytest
 ```
+
+Note:
+
+- `index_data.py` is best for first-time indexing or add-only updates
+- `reindex_documents.py` resets the current Chroma DB and rebuilds it from all current source files
+- after a full reindex, restart the Flask app if it was already running
 
 ---
 
@@ -384,7 +402,7 @@ This repository is actively being modularized from a single-file prototype into 
 
 - your `.env` values are present
 - your dependencies were installed successfully
-- your documents are placed under `data/raw/academics/`
+- your source documents are placed under `data/raw/`
 - your vector store can be created under `storage/vector_db/`
 
 ---
