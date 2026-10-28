@@ -146,6 +146,8 @@ def handle_chat_turn(user_input, file):
                 )
             bot_reply = call_text_model(GENERAL_SYSTEM_PROMPT, general_prompt, temperature=0.2)
     except RuntimeError as exc:
+        from ..llm.groq_client import reset_client
+        reset_client()
         logger.warning("Model configuration issue: %s", exc)
         bot_reply = (
             "The AI service is not configured yet. Please check your API keys in the `.env` file "
@@ -158,6 +160,8 @@ def handle_chat_turn(user_input, file):
             "or firewall settings and try again."
         )
     except APIError as exc:
+        from ..llm.groq_client import reset_client
+        reset_client()
         logger.warning("AI service request failed: %s", exc)
         bot_reply = (
             "The AI service returned an error while processing your request. Please try again in a moment."

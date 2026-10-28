@@ -7,15 +7,35 @@ from ..constants.settings import TEXT_MODEL, VISION_MODEL
 
 
 _client = None
+_cached_api_key = None
+
+
+def reset_client():
+    global _client, _cached_api_key
+    _client = None
+    _cached_api_key = None
 
 
 def get_groq_client():
-    global _client
-    if _client is None:
-        api_key = os.environ.get("GROQ_API_KEY")
-        if not api_key:
-            raise RuntimeError("GROQ_API_KEY is not set.")
+    global _client, _cached_api_key
+    from ..config import BASE_DIR
+    from ..utils.file_utils import load_local_env
+
+    # Reload local .env so newly added or rotated keys are picked up without requiring server restart
+    env_path = os.path.join(BASE_DIR, ".env")
+    if os.path.exists(env_path):
+        load_local_env(env_path)
+
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        _client = None
+        _cached_api_key = None
+        raise RuntimeError("GROQ_API_KEY is not set.")
+
+    if _client is None or api_key != _cached_api_key:
         _client = Groq(api_key=api_key, timeout=30.0, max_retries=1)
+        _cached_api_key = api_key
+
     return _client
 
 
