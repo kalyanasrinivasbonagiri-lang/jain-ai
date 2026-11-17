@@ -11,10 +11,28 @@ logger = get_logger("jain_ai.rag.retrieval")
 
 
 BRANCH_ALIASES = {
-    "cse": {"cse", "computer science"},
-    "ctis": {"ctis"},
-    "ai": {"ai", "artificial intelligence"},
+    "aiml": {"aiml", "artificial intelligence and machine learning", "ai and ml"},
+    "aide": {"aide", "artificial intelligence and data engineering", "ai and de"},
+    "devops": {"devops", "ai-driven devops", "ai driven devops"},
+    "blockchain": {"blockchain", "blockchain technology"},
+    "ctis": {"ctis", "cloud technology and information security"},
+    "ctma": {"ctma", "mobile applications and cloud technology"},
+    "cps": {"cps", "cyber physical systems", "cyber physical system"},
+    "cybersecurity": {"cybersecurity", "cyber security"},
+    "ds": {"ds", "data science"},
     "iot": {"iot", "internet of things"},
+    "se": {"se", "software engineering"},
+    "star": {"cse star", "star"},
+    "csbs": {"csbs", "computer science and business systems"},
+    "ise": {"ise", "information science and engineering", "information science"},
+    "ece": {"ece", "electronics and communication engineering", "electronics and communication"},
+    "eee": {"eee", "electrical and electronics engineering", "electrical and electronics"},
+    "mech": {"mech", "mechanical", "mechanical engineering"},
+    "civil": {"civil", "civil engineering"},
+    "aero": {"aero", "aerospace", "aerospace engineering"},
+    "aeronautical": {"aeronautical", "aeronautical engineering"},
+    "ai": {"ai", "artificial intelligence"},
+    "cse": {"cse", "computer science", "computer science and engineering"},
 }
 
 FEE_TERMS = {"fee", "fees", "tuition", "per annum", "inr", "registration"}
@@ -74,10 +92,11 @@ def tokenize_meaningful(text, stopwords=None):
 
 
 def extract_branch_line(content):
-    match = re.search(r"branch\s*/\s*school\s*:\s*(.+)", content, re.IGNORECASE)
-    if not match:
-        return ""
-    return match.group(1).strip().lower()
+    match = re.search(r"(?:branch\s*/\s*school|department(?:\s*name)?|program(?:\s*name)?)\s*:\s*(.+)", content, re.IGNORECASE)
+    if match:
+        return match.group(1).strip().lower()
+    first_line = content.splitlines()[0] if content else ""
+    return first_line.strip().lower()
 
 
 def extract_specialization_line(content):
@@ -102,19 +121,19 @@ def branch_match_score(query, chunk):
         return 0
 
     branch_line = extract_branch_line(chunk.page_content)
-    if not branch_line:
-        return 0
+    metadata = getattr(chunk, "metadata", {}) or {}
+    source = (metadata.get("source") or "").lower().replace("\\", "/")
 
     if branch_key == "cse":
         if "cse and cse star" in branch_line or re.fullmatch(r"cse", branch_line):
             return 120
-        if re.search(r"\bcse\b", branch_line):
+        if re.search(r"\bcse\b", branch_line) or "cse" in source:
             return 60
         return 0
 
     aliases = BRANCH_ALIASES.get(branch_key, {branch_key})
     for alias in aliases:
-        if re.search(rf"\b{re.escape(alias)}\b", branch_line):
+        if re.search(rf"\b{re.escape(alias)}\b", branch_line) or re.search(rf"\b{re.escape(alias)}\b", source):
             return 100
 
     return 0

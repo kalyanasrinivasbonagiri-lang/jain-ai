@@ -14,6 +14,7 @@ from ..constants.settings import MAX_CONTEXT_CHARS
 from ..llm.groq_client import call_text_model
 from ..rag.pipeline import get_rag_pipeline
 from ..utils.logging_utils import get_logger
+from ..utils.query_expansion import expand_aliases
 from ..utils.temporal_query import expand_temporal_query
 from .response_service import answer_from_context, answer_with_fallback
 from .routing_service import route_request
@@ -46,7 +47,8 @@ def split_compound_question(user_input):
 
 
 def answer_rag_question(query, system_prompt, fallback_prompt, recent_chat_context):
-    resolved_query = expand_temporal_query(query)
+    expanded_query = expand_aliases(query)
+    resolved_query = expand_temporal_query(expanded_query)
     context_bundle = get_rag_pipeline().build_context_bundle(resolved_query)
     return answer_with_fallback(
         resolved_query,

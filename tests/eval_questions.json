@@ -1,0 +1,117 @@
+[
+  {
+    "id": "q1",
+    "query": "fee for EEE?",
+    "expect": ["2,00,000"],
+    "expected_source": "branch_wise_fees.txt"
+  },
+  {
+    "id": "q2",
+    "query": "fee for CSE AIML",
+    "expect": ["4,00,000"],
+    "expected_source": "branch_wise_fees.txt"
+  },
+  {
+    "id": "q3",
+    "query": "What is the fee for Aerospace Engineering?",
+    "expect": ["3,25,000"],
+    "expected_source": "branch_wise_fees.txt"
+  },
+  {
+    "id": "q4",
+    "query": "What is the one-time registration fee for B.Tech admission?",
+    "expect": ["30,000"],
+    "expected_source": "branch_wise_fees.txt"
+  },
+  {
+    "id": "q5",
+    "query": "What is the fee for ECE?",
+    "expect": ["3,00,000"],
+    "expected_source": "branch_wise_fees.txt"
+  },
+  {
+    "id": "q6",
+    "query": "What is the fee for Mechanical Engineering?",
+    "expect": ["2,15,000"],
+    "expected_source": "branch_wise_fees.txt"
+  },
+  {
+    "id": "q7",
+    "query": "What is the highest package in Jain University?",
+    "expect": ["81 LPA"],
+    "expected_source": "placements_fet_ug_2026.txt"
+  },
+  {
+    "id": "q8",
+    "query": "What is the average CTC on the dashboard?",
+    "expect": ["7.54 LPA"],
+    "expected_source": "placements_fet_ug_2026.txt"
+  },
+  {
+    "id": "q9",
+    "query": "What is the lowest CTC in Jain University?",
+    "expect": ["4 LPA"],
+    "expected_source": "placements_fet_ug_2026.txt"
+  },
+  {
+    "id": "q10",
+    "query": "What is the placement percentage in Jain University?",
+    "expect": ["93.49%"],
+    "expected_source": "placements_fet_ug_2026.txt"
+  },
+  {
+    "id": "q11",
+    "query": "What are the total credits for CSE AIML?",
+    "expect": ["165"],
+    "expected_source": "cse_aiml_btech_2024_2028.txt"
+  },
+  {
+    "id": "q12",
+    "query": "How many total credits will a CSE AI student get?",
+    "expect": ["164"],
+    "expected_source": "cse_ai_btech_2024_2028.txt"
+  },
+  {
+    "id": "q13",
+    "query": "How many credits does AI-Driven DevOps get?",
+    "expect": ["164"],
+    "expected_source": "cse_ai_driven_devops_btech_2024_2028.txt"
+  },
+  {
+    "id": "q14",
+    "query": "What clubs are there in Jain?",
+    "expect": ["ENIGMA", "Cognito", "Neuron.AI"],
+    "expected_source": "clubs"
+  },
+  {
+    "id": "q15",
+    "query": "What are the hostel fees for 2 sharing boys in campus?",
+    "expect": ["2,20,000"],
+    "expected_source": "hostel_facilities_and_fees.txt"
+  },
+  {
+    "id": "q16",
+    "query": "What is the fee for MBBS at Jain University FET?",
+    "refuse": true
+  },
+  {
+    "id": "q17",
+    "query": "What is the fee for Fashion Designing in FET?",
+    "refuse": true
+  },
+  {
+    "id": "q18",
+    "query": "What is the cutoff rank for IIT Bombay CSE?",
+    "refuse": true
+  },
+  {
+    "id": "q19",
+    "query": "Who is the Prime Minister of Australia?",
+    "refuse": true
+  },
+  {
+    "id": "q20",
+    "query": "What are the placement statistics for Stanford University?",
+    "refuse": true
+  }
+]
